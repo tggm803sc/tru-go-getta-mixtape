@@ -1,0 +1,93 @@
+{
+  "schema": "tgg.higgsfield.workspace/v1",
+  "id": "tgg-higgsfield",
+  "owner": "TGG",
+  "project_id": "tgg-higgsfield",
+  "service": "tgg-higgsfield",
+  "storage": {
+    "runtime_jobs": "/data/tgg-higgsfield/jobs",
+    "project_artifacts": ".tgg/higgsfield/jobs",
+    "backup": "TGG Projects git bundles"
+  },
+  "capabilities": [
+    "image-generation",
+    "video-generation",
+    "vfx",
+    "avatar-generation",
+    "world-shot-generation",
+    "ad-variants",
+    "saved-presets",
+    "project-job-history",
+    "backend-forwarding"
+  ],
+  "pipelines": [
+    {
+      "id": "world-cinematic",
+      "type": "world-shot",
+      "project_context": [
+        "district",
+        "travelBand",
+        "weather",
+        "time",
+        "camera",
+        "graphicsPreset"
+      ]
+    },
+    {
+      "id": "avatar-hero",
+      "type": "avatar",
+      "project_context": [
+        "avatar",
+        "wardrobe",
+        "hair",
+        "accessories",
+        "graphicsPreset"
+      ]
+    },
+    {
+      "id": "vehicle-commercial",
+      "type": "video",
+      "project_context": [
+        "vehicle",
+        "garage",
+        "district",
+        "weather",
+        "camera"
+      ]
+    },
+    {
+      "id": "music-video-vfx",
+      "type": "vfx",
+      "project_context": [
+        "artist",
+        "track",
+        "performance",
+        "camera",
+        "effects"
+      ]
+    },
+    {
+      "id": "game-trailer",
+      "type": "video",
+      "project_context": [
+        "world",
+        "race",
+        "studio",
+        "avatar",
+        "vehicle",
+        "camera"
+      ]
+    },
+    {
+      "id": "social-ad",
+      "type": "ad-variant",
+      "project_context": [
+        "campaign",
+        "release",
+        "artist",
+        "game",
+        "brand"
+      ]
+    }
+  ]
+}
