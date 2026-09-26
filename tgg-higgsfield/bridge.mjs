@@ -9,6 +9,8 @@ const HOST=process.env.TGG_HIGGSFIELD_HOST||'0.0.0.0';
 const TOKEN=String(process.env.TGG_HIGGSFIELD_TOKEN||'').trim();
 const BACKEND=String(process.env.TGG_HIGGSFIELD_BACKEND_URL||'').trim().replace(/\/$/,'');
 const BACKEND_TOKEN=String(process.env.TGG_HIGGSFIELD_BACKEND_TOKEN||'').trim();
+const PROJECTS_URL=String(process.env.TGG_PROJECTS_URL||'http://127.0.0.1:10110').trim().replace(/\/$/,'');
+const PROJECTS_TOKEN=String(process.env.TGG_PROJECTS_TOKEN||'').trim();
 
 await fs.mkdir(path.join(ROOT,'jobs'),{recursive:true});
 
@@ -23,6 +25,42 @@ async function writeJob(job){
   await fs.writeFile(tmp,JSON.stringify(job,null,2)+'\n',{mode:0o600});
   await fs.rename(tmp,file);
 }
+async function persistProjectJob(job,{event='update'}={}){
+  const projectId=String(job.project_id||'').trim();
+  if(!projectId)return {ok:false,error:'project_id_missing'};
+  try{
+    const file='.tgg/higgsfield/jobs/'+job.id+'.json';
+    const response=await fetch(
+      PROJECTS_URL+'/v1/projects/'+encodeURIComponent(projectId)+'/artifacts/'+file.split('/').map(encodeURIComponent).join('/'),
+      {
+        method:'PUT',
+        headers:{
+          'content-type':'application/json',
+          ...(PROJECTS_TOKEN?{authorization:'Bearer '+PROJECTS_TOKEN}:{})
+        },
+        body:JSON.stringify({
+          content:JSON.stringify(job,null,2)+'\n',
+          message:'TGG Higgsfield '+event+' '+job.id
+        }),
+        signal:AbortSignal.timeout(30000)
+      }
+    );
+    const text=await response.text();
+    let body={};try{body=text?JSON.parse(text):{}}catch{}
+    if(!response.ok||body?.ok!==true)throw new Error(body?.error||('projects_http_'+response.status));
+    return {ok:true,project_id:projectId,path:file,head:body?.project?.head||null};
+  }catch(error){
+    return {ok:false,project_id:projectId,error:String(error?.message||error)};
+  }
+}
+async function listJobs(){
+  const names=await fs.readdir(path.join(ROOT,'jobs')).catch(()=>[]);
+  const jobs=[];
+  for(const name of names.filter(x=>x.endsWith('.json')).sort().reverse()){
+    try{jobs.push(JSON.parse(await fs.readFile(path.join(ROOT,'jobs',name),'utf8')))}catch{}
+  }
+  return jobs.sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
 function auth(req){return !TOKEN||String(req.headers.authorization||'')==='Bearer '+TOKEN}
 async function jsonBody(req){
   let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>8*1024*1024)throw new Error('body_too_large')}
@@ -33,6 +71,8 @@ async function dispatch(job){
   if(!BACKEND){
     job.status='queued-local';
     job.updated_at=new Date().toISOString();
+    await writeJob(job);
+    job.project_save=await persistProjectJob(job,{event:'queued'});
     await writeJob(job);
     return job;
   }
@@ -56,13 +96,20 @@ async function dispatch(job){
   job.remote=remote;
   job.updated_at=new Date().toISOString();
   await writeJob(job);
+  job.project_save=await persistProjectJob(job,{event:'submitted'});
+  await writeJob(job);
   return job;
 }
 const server=http.createServer(async(req,res)=>{
   const url=new URL(req.url,'http://tgg.local');
   try{
-    if(req.method==='GET'&&url.pathname==='/health')return send(res,200,{ok:true,service:'tgg-higgsfield',owner:'TGG',mode:BACKEND?'backend':'local-queue',time:new Date().toISOString()});
+    if(req.method==='GET'&&url.pathname==='/health')return send(res,200,{ok:true,service:'tgg-higgsfield',owner:'TGG',mode:BACKEND?'backend':'local-queue',projects_url:PROJECTS_URL,project_persistence:true,time:new Date().toISOString()});
     if(url.pathname.startsWith('/v1/')&&req.method!=='GET'&&!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+    if(req.method==='GET'&&url.pathname==='/v1/jobs'){
+      const projectId=String(url.searchParams.get('project_id')||'').trim();
+      const jobs=await listJobs();
+      return send(res,200,{ok:true,jobs:projectId?jobs.filter(job=>String(job.project_id||'')===projectId):jobs});
+    }
     if(req.method==='POST'&&url.pathname==='/v1/jobs'){
       const input=await jsonBody(req);
       const type=String(input.type||'image').trim();
@@ -76,7 +123,8 @@ const server=http.createServer(async(req,res)=>{
         created_at:new Date().toISOString(),updated_at:new Date().toISOString()
       };
       await writeJob(job);
-      return send(res,202,{ok:true,job:await dispatch(job)});
+      const dispatched=await dispatch(job);
+      return send(res,202,{ok:true,job:dispatched});
     }
     const m=url.pathname.match(/^\/v1\/jobs\/([a-f0-9]{24})$/);
     if(req.method==='GET'&&m)return send(res,200,{ok:true,job:await readJob(m[1])});
