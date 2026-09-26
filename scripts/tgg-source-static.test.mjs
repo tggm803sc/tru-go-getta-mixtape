@@ -43,6 +43,8 @@ assert.match(dashboard,/copyCloneUrl/);
 assert.match(server,/git http-backend|http-backend/);
 assert.match(server,/gitAuth/);
 assert.match(server,/git-receive-pack/);
+assert.match(server,/application\/octet-stream/);
+assert.match(server,/download_url/);
 assert.match(store,/receive\.denyCurrentBranch/);
 assert.match(store,/updateInstead/);
 
@@ -65,6 +67,7 @@ console.log(JSON.stringify({
   actions:true,
   smart_http_git:true,
   clone_fetch_push:true,
+  downloadable_bundle_exports:true,
   higgsfield_every_project:true,
   save_all:true
 },null,2));
