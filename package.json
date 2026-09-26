@@ -12,8 +12,9 @@
     "tgg:projects:bootstrap": "node scripts/tgg-projects-bootstrap.mjs && node scripts/tgg-higgsfield-project-sync.mjs",
     "tgg:projects:backup": "node scripts/tgg-projects-backup.mjs",
     "tgg:projects:check": "node --check tgg-projects/store.mjs && node --check tgg-projects/server.mjs && node --check scripts/tgg-projects-bootstrap.mjs && node --check scripts/tgg-projects-backup.mjs",
-    "tgg:higgsfield:check": "node --check tgg-higgsfield/bridge.mjs && node --check scripts/tgg-higgsfield-project-sync.mjs",
-    "tgg:higgsfield:sync": "node scripts/tgg-higgsfield-project-sync.mjs"
+    "tgg:higgsfield:check": "node --check tgg-higgsfield/bridge.mjs && node --check scripts/tgg-higgsfield-project-sync.mjs && node --check scripts/tgg-higgsfield-static.test.mjs && npm run tgg:higgsfield:test",
+    "tgg:higgsfield:sync": "node scripts/tgg-higgsfield-project-sync.mjs",
+    "tgg:higgsfield:test": "node scripts/tgg-higgsfield-static.test.mjs"
   },
   "engines": {
     "node": ">=20"
