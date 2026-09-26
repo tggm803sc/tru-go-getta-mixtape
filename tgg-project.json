@@ -1,0 +1,22 @@
+{
+  "schema": "tgg.project/v1",
+  "id": "tru-go-getta-mixtape",
+  "name": "TRU GO GETTA WORLD",
+  "owner": "TGG",
+  "runtime_owner": "tgg",
+  "source_control": "tgg-projects",
+  "storage_root": "/data/tgg-projects",
+  "default_branch": "main",
+  "services": [
+    "tgg-projects",
+    "tgg-higgsfield",
+    "tgg-world",
+    "tgg-creator-studio",
+    "tgg-cloud",
+    "tgg-runtime"
+  ],
+  "production_release": {
+    "track": "frozen-v135",
+    "status": "protected-external-runtime-evidence-pending"
+  }
+}
