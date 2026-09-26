@@ -1,0 +1,37 @@
+{
+  "schema": "tgg.projects.catalog/v1",
+  "owner": "TGG",
+  "projects": [
+    {
+      "id": "tgg-world",
+      "name": "TGG World",
+      "kind": "game",
+      "default_branch": "main",
+      "protected_release": "v135"
+    },
+    {
+      "id": "tgg-creator-studio",
+      "name": "TGG Creator Studio",
+      "kind": "creator",
+      "default_branch": "main"
+    },
+    {
+      "id": "tgg-cloud",
+      "name": "TGG Cloud",
+      "kind": "infrastructure",
+      "default_branch": "main"
+    },
+    {
+      "id": "tgg-runtime",
+      "name": "TGG Runtime",
+      "kind": "infrastructure",
+      "default_branch": "main"
+    },
+    {
+      "id": "tgg-higgsfield",
+      "name": "TGG Higgsfield",
+      "kind": "creator-ai",
+      "default_branch": "main"
+    }
+  ]
+}
