@@ -22,6 +22,13 @@ function safeRelative(value){
   if(!normalized||normalized==='.'||normalized.startsWith('../')||normalized.includes('/../'))throw new Error('invalid_path');
   return normalized;
 }
+function safeTitle(value,label='title'){
+  const text=String(value||'').trim();
+  if(!text)throw new Error(label+'_required');
+  return text.slice(0,240);
+}
+function now(){return new Date().toISOString()}
+function itemId(prefix){return prefix+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
 async function git(cwd,args,{allowFailure=false}={}){
   try{
     const {stdout='',stderr=''}=await execFileAsync('git',args,{cwd,env:{...process.env,GIT_TERMINAL_PROMPT:'0'},maxBuffer:16*1024*1024});
@@ -155,4 +162,212 @@ export async function importGitProject({id,remote_url,name='',description='',def
   const diff=await git(dir,['diff','--cached','--quiet'],{allowFailure:true});
   if(!diff.ok)await git(dir,['commit','-m','TGG Projects import metadata']);
   return getProject(id);
+}
+
+
+async function withMetadataCommit(id,{message,mutate}){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  const dirty=(await git(dir,['status','--porcelain'])).stdout;
+  if(dirty)throw new Error('project_dirty_metadata_commit_blocked');
+  const project=await getProject(id);
+  const original=project.current_branch||project.default_branch||'main';
+  const target=project.default_branch||'main';
+  if(original!==target)await git(dir,['checkout',target]);
+  try{
+    const result=await mutate({dir,project});
+    await git(dir,['add','--','.tgg']);
+    const diff=await git(dir,['diff','--cached','--quiet'],{allowFailure:true});
+    if(!diff.ok)await git(dir,['commit','-m',String(message||'Update TGG project metadata').slice(0,240)]);
+    return result;
+  }finally{
+    if(original!==target)await git(dir,['checkout',original]);
+  }
+}
+async function readMetaCollection(id,kind){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  const folder=path.join(dir,'.tgg',kind);
+  const names=await fs.readdir(folder).catch(()=>[]);
+  const out=[];
+  for(const name of names.filter(x=>x.endsWith('.json')).sort()){
+    try{out.push(JSON.parse(await fs.readFile(path.join(folder,name),'utf8')))}catch{}
+  }
+  return out;
+}
+async function writeMetaItem(dir,kind,id,value){
+  const folder=path.join(dir,'.tgg',kind);
+  await fs.mkdir(folder,{recursive:true});
+  const file=path.join(folder,id+'.json');
+  const tmp=file+'.tmp-'+process.pid;
+  await fs.writeFile(tmp,JSON.stringify(value,null,2)+'\n',{mode:0o600});
+  await fs.rename(tmp,file);
+}
+
+export async function listIssues(id){
+  return (await readMetaCollection(id,'issues')).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
+export async function createIssue(id,{title,body='',labels=[]}={}){
+  title=safeTitle(title);
+  return withMetadataCommit(id,{
+    message:'Issue: '+title,
+    mutate:async({dir})=>{
+      const issue={
+        schema:'tgg.issue/v1',
+        id:itemId('issue'),
+        number:(await listIssues(id)).length+1,
+        title,
+        body:String(body||''),
+        labels:Array.isArray(labels)?labels.map(String).slice(0,20):[],
+        state:'open',
+        owner:'TGG',
+        created_at:now(),
+        updated_at:now()
+      };
+      await writeMetaItem(dir,'issues',issue.id,issue);
+      return issue;
+    }
+  });
+}
+export async function updateIssue(id,issueId,{state,title,body,labels}={}){
+  issueId=safeId(issueId);
+  return withMetadataCommit(id,{
+    message:'Update issue '+issueId,
+    mutate:async({dir})=>{
+      const file=path.join(dir,'.tgg','issues',issueId+'.json');
+      let issue;try{issue=JSON.parse(await fs.readFile(file,'utf8'))}catch{throw new Error('issue_not_found')}
+      if(state!==undefined){
+        const next=String(state);
+        if(!['open','closed'].includes(next))throw new Error('invalid_issue_state');
+        issue.state=next;
+      }
+      if(title!==undefined)issue.title=safeTitle(title);
+      if(body!==undefined)issue.body=String(body);
+      if(labels!==undefined)issue.labels=Array.isArray(labels)?labels.map(String).slice(0,20):[];
+      issue.updated_at=now();
+      await writeMetaItem(dir,'issues',issue.id,issue);
+      return issue;
+    }
+  });
+}
+
+export async function listPullRequests(id){
+  return (await readMetaCollection(id,'pull-requests')).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
+export async function createPullRequest(id,{title,body='',head,base}={}){
+  title=safeTitle(title);
+  const dir=projectDir(id);
+  head=safeRef(head);
+  const project=await getProject(id);
+  base=safeRef(base||project.default_branch||'main');
+  const headSha=(await git(dir,['rev-parse',head],{allowFailure:true})).stdout;
+  const baseSha=(await git(dir,['rev-parse',base],{allowFailure:true})).stdout;
+  if(!headSha)throw new Error('head_ref_not_found');
+  if(!baseSha)throw new Error('base_ref_not_found');
+  return withMetadataCommit(id,{
+    message:'Pull request: '+title,
+    mutate:async({dir:projectRoot})=>{
+      const pr={
+        schema:'tgg.pull-request/v1',
+        id:itemId('pr'),
+        number:(await listPullRequests(id)).length+1,
+        title,
+        body:String(body||''),
+        head,
+        base,
+        head_sha:headSha,
+        base_sha:baseSha,
+        state:'open',
+        merge_sha:null,
+        owner:'TGG',
+        created_at:now(),
+        updated_at:now()
+      };
+      await writeMetaItem(projectRoot,'pull-requests',pr.id,pr);
+      return pr;
+    }
+  });
+}
+export async function mergePullRequest(id,prId,{message=''}={}){
+  prId=safeId(prId);
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  const dirty=(await git(dir,['status','--porcelain'])).stdout;
+  if(dirty)throw new Error('project_dirty_merge_blocked');
+  const file=path.join(dir,'.tgg','pull-requests',prId+'.json');
+  let pr;try{pr=JSON.parse(await fs.readFile(file,'utf8'))}catch{throw new Error('pull_request_not_found')}
+  if(pr.state!=='open')throw new Error('pull_request_not_open');
+  const original=(await git(dir,['branch','--show-current'])).stdout||pr.base;
+  await git(dir,['checkout',pr.base]);
+  try{
+    await git(dir,['merge','--no-ff',pr.head,'-m',String(message||('Merge '+pr.title)).slice(0,240)]);
+    pr.state='merged';
+    pr.merge_sha=(await git(dir,['rev-parse','HEAD'])).stdout;
+    pr.merged_at=now();
+    pr.updated_at=now();
+    await writeMetaItem(dir,'pull-requests',pr.id,pr);
+    await git(dir,['add','--','.tgg/pull-requests/'+pr.id+'.json']);
+    await git(dir,['commit','-m','Record merged pull request '+pr.number]);
+  }finally{
+    if(original!==pr.base)await git(dir,['checkout',original]);
+  }
+  return pr;
+}
+
+export async function compareRefs(id,{base,head}={}){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  base=safeRef(base);head=safeRef(head);
+  const summary=await git(dir,['diff','--stat',base+'...'+head],{allowFailure:true});
+  const names=await git(dir,['diff','--name-status',base+'...'+head],{allowFailure:true});
+  const log=await git(dir,['log','--pretty=format:%H%x1f%an%x1f%aI%x1f%s',base+'..'+head],{allowFailure:true});
+  return {
+    base,head,
+    stat:summary.stdout,
+    files:names.stdout?names.stdout.split('\n').filter(Boolean):[],
+    commits:log.stdout?log.stdout.split('\n').filter(Boolean).map(line=>{const [sha,author,date,subject]=line.split('\x1f');return {sha,author,date,subject}}):[]
+  };
+}
+
+export async function listTags(id){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  const r=await git(dir,['for-each-ref','--format=%(refname:short)|%(objectname)|%(creatordate:iso-strict)','refs/tags/']);
+  return r.stdout?r.stdout.split('\n').filter(Boolean).map(line=>{const [name,sha,date]=line.split('|');return {name,sha,date}}):[];
+}
+export async function createTag(id,{name,ref='HEAD',message=''}={}){
+  const dir=projectDir(id);name=safeRef(name);ref=safeRef(ref);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  await git(dir,['tag','-a',name,ref,'-m',String(message||('TGG release '+name)).slice(0,240)]);
+  return listTags(id);
+}
+
+export async function listReleases(id){
+  return (await readMetaCollection(id,'releases')).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
+export async function createRelease(id,{tag,title,notes='',ref='HEAD'}={}){
+  tag=safeRef(tag);title=safeTitle(title||tag);
+  const existing=await listTags(id);
+  if(!existing.some(x=>x.name===tag))await createTag(id,{name:tag,ref,message:title});
+  return withMetadataCommit(id,{
+    message:'Release '+tag,
+    mutate:async({dir})=>{
+      const release={
+        schema:'tgg.release/v1',
+        id:itemId('release'),
+        tag,
+        title,
+        notes:String(notes||''),
+        ref:safeRef(ref),
+        owner:'TGG',
+        created_at:now()
+      };
+      await writeMetaItem(dir,'releases',release.id,release);
+      return release;
+    }
+  });
+}
+
+export async function saveProjectArtifact(id,file,content,{message='Save TGG artifact'}={}){
+  return writeFileAndCommit(id,safeRelative(file),typeof content==='string'?content:JSON.stringify(content,null,2)+'\n',{message});
 }
