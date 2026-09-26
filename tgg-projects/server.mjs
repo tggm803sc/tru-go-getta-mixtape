@@ -4,7 +4,9 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {
   ROOT,ensureRoot,listProjects,getProject,createProject,importGitProject,listBranches,createBranch,
-  listCommits,listFiles,readFileAtRef,writeFileAndCommit,getStatus
+  listCommits,listFiles,readFileAtRef,writeFileAndCommit,getStatus,
+  listIssues,createIssue,updateIssue,listPullRequests,createPullRequest,mergePullRequest,
+  compareRefs,listTags,createTag,listReleases,createRelease,saveProjectArtifact
 } from './store.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
@@ -79,6 +81,63 @@ const server=http.createServer(async(req,res)=>{
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/commits$/);
     if(method==='GET'&&m)return send(res,200,{ok:true,commits:await listCommits(dec(m[1]),{limit:url.searchParams.get('limit')||50})});
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/issues$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,issues:await listIssues(dec(m[1]))});
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,201,{ok:true,issue:await createIssue(dec(m[1]),input)});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/issues\/([^/]+)$/);
+    if(method==='PATCH'&&m){
+      const input=await body(req);
+      return send(res,200,{ok:true,issue:await updateIssue(dec(m[1]),dec(m[2]),input)});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/pull-requests$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,pull_requests:await listPullRequests(dec(m[1]))});
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,201,{ok:true,pull_request:await createPullRequest(dec(m[1]),input)});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/pull-requests\/([^/]+)\/merge$/);
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,200,{ok:true,pull_request:await mergePullRequest(dec(m[1]),dec(m[2]),input)});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/compare$/);
+    if(method==='GET'&&m){
+      return send(res,200,{ok:true,comparison:await compareRefs(dec(m[1]),{
+        base:url.searchParams.get('base'),
+        head:url.searchParams.get('head')
+      })});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/tags$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,tags:await listTags(dec(m[1]))});
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,201,{ok:true,tags:await createTag(dec(m[1]),input)});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/releases$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,releases:await listReleases(dec(m[1]))});
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,201,{ok:true,release:await createRelease(dec(m[1]),input)});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/artifacts\/(.+)$/);
+    if(method==='PUT'&&m){
+      const input=await body(req);
+      const result=await saveProjectArtifact(dec(m[1]),dec(m[2]),input.content??input,{
+        message:input.message||('Save TGG artifact '+dec(m[2]))
+      });
+      return send(res,200,{ok:true,...result});
+    }
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/files$/);
     if(method==='GET'&&m)return send(res,200,{ok:true,files:await listFiles(dec(m[1]),{ref:url.searchParams.get('ref')||'HEAD'})});
