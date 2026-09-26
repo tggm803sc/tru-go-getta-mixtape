@@ -6,15 +6,17 @@
   "description": "TGG-owned project and Git repository service",
   "scripts": {
     "start": "node tgg-projects/server.mjs",
-    "check": "npm run tgg:projects:check && npm run tgg:higgsfield:check",
+    "check": "npm run tgg:projects:check && npm run tgg:higgsfield:check && npm run tgg:source:test",
     "tgg:projects": "node tgg-projects/server.mjs",
     "tgg:higgsfield": "node tgg-higgsfield/bridge.mjs",
     "tgg:projects:bootstrap": "node scripts/tgg-projects-bootstrap.mjs && node scripts/tgg-higgsfield-project-sync.mjs",
     "tgg:projects:backup": "node scripts/tgg-projects-backup.mjs",
-    "tgg:projects:check": "node --check tgg-projects/store.mjs && node --check tgg-projects/server.mjs && node --check scripts/tgg-projects-bootstrap.mjs && node --check scripts/tgg-projects-backup.mjs",
+    "tgg:projects:check": "node --check tgg-projects/store.mjs && node --check tgg-projects/server.mjs && node --check scripts/tgg-projects-bootstrap.mjs && node --check scripts/tgg-projects-save-all.mjs && node --check scripts/tgg-projects-backup.mjs",
     "tgg:higgsfield:check": "node --check tgg-higgsfield/bridge.mjs && node --check scripts/tgg-higgsfield-project-sync.mjs && node --check scripts/tgg-higgsfield-static.test.mjs && npm run tgg:higgsfield:test",
     "tgg:higgsfield:sync": "node scripts/tgg-higgsfield-project-sync.mjs",
-    "tgg:higgsfield:test": "node scripts/tgg-higgsfield-static.test.mjs"
+    "tgg:higgsfield:test": "node scripts/tgg-higgsfield-static.test.mjs",
+    "tgg:projects:save-all": "node scripts/tgg-projects-bootstrap.mjs && node scripts/tgg-projects-save-all.mjs && node scripts/tgg-higgsfield-project-sync.mjs && node scripts/tgg-projects-backup.mjs",
+    "tgg:source:test": "node scripts/tgg-source-static.test.mjs"
   },
   "engines": {
     "node": ">=20"
