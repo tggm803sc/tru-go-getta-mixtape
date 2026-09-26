@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TGG Projects</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui;background:#090b10;color:#f6f7fb}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172033,#090b10 48%);min-height:100vh}
+header{padding:28px 34px;border-bottom:1px solid #283044;background:#0c111bcc;backdrop-filter:blur(16px);position:sticky;top:0}
+h1{margin:0;font-size:25px;letter-spacing:.04em}.tag{color:#99a6c4;font-size:13px;margin-top:6px}
+main{max-width:1200px;margin:auto;padding:28px;display:grid;grid-template-columns:300px 1fr;gap:22px}
+.card{background:#101622;border:1px solid #273149;border-radius:18px;box-shadow:0 16px 50px #0005;overflow:hidden}
+.section{padding:18px}.title{font-weight:800}.muted{color:#8f9bb5;font-size:13px}
+button,input,textarea{font:inherit}.project{padding:14px;border-bottom:1px solid #202a3c;cursor:pointer}.project:hover,.project.active{background:#172238}
+button{border:1px solid #33425f;background:#18243a;color:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
+button:hover{background:#223252}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+pre{white-space:pre-wrap;word-break:break-word;background:#0b1019;padding:14px;border-radius:12px;border:1px solid #202a3c;max-height:440px;overflow:auto}
+table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #202a3c;text-align:left;font-size:13px}
+input{background:#0b1019;border:1px solid #33425f;color:#fff;padding:9px 10px;border-radius:10px}
+@media(max-width:800px){main{grid-template-columns:1fr;padding:14px}header{padding:20px}}
+</style>
+</head>
+<body>
+<header><h1>TGG Projects</h1><div class="tag">TGG-owned source control · projects · branches · commits · files</div></header>
+<main>
+  <aside class="card"><div class="section"><div class="title">Projects</div><div class="muted">Stored on TGG infrastructure</div></div><div id="projects"></div></aside>
+  <section class="card"><div class="section">
+    <div class="toolbar"><div><div class="title" id="name">Select a project</div><div class="muted" id="meta">No project loaded</div></div></div>
+    <div class="toolbar" style="margin-top:16px"><button onclick="loadTab('commits')">Commits</button><button onclick="loadTab('branches')">Branches</button><button onclick="loadTab('files')">Files</button><button onclick="loadTab('status')">Status</button></div>
+    <div id="view" style="margin-top:16px"></div>
+  </div></section>
+</main>
+<script>
+let current=null;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function api(url,options){const r=await fetch(url,options);const j=await r.json();if(!r.ok)throw Error(j.error||r.status);return j}
+async function boot(){const j=await api('/v1/projects');const box=document.querySelector('#projects');box.innerHTML=j.projects.map(p=>'<div class="project" data-id="'+esc(p.id)+'"><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.current_branch)+' · '+esc((p.head||'').slice(0,10))+'</div></div>').join('')||'<div class="section muted">No TGG projects yet.</div>';box.querySelectorAll('.project').forEach(el=>el.onclick=()=>select(el.dataset.id));}
+async function select(id){current=id;document.querySelectorAll('.project').forEach(x=>x.classList.toggle('active',x.dataset.id===id));const j=await api('/v1/projects/'+encodeURIComponent(id));document.querySelector('#name').textContent=j.project.name;document.querySelector('#meta').textContent=j.project.id+' · '+j.project.current_branch+' · '+(j.project.head||'no commits');loadTab('commits');}
+async function loadTab(tab){if(!current)return;const view=document.querySelector('#view');view.innerHTML='<div class="muted">Loading…</div>';if(tab==='commits'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/commits');view.innerHTML='<table><tr><th>Commit</th><th>Message</th><th>Author</th><th>Date</th></tr>'+j.commits.map(x=>'<tr><td><code>'+esc(x.sha.slice(0,10))+'</code></td><td>'+esc(x.subject)+'</td><td>'+esc(x.author)+'</td><td>'+esc(x.date)+'</td></tr>').join('')+'</table>'}else if(tab==='branches'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/branches');view.innerHTML='<table><tr><th>Branch</th><th>Commit</th></tr>'+j.branches.map(x=>'<tr><td>'+esc(x.current?'● '+x.name:x.name)+'</td><td><code>'+esc(x.sha.slice(0,12))+'</code></td></tr>').join('')+'</table>'}else if(tab==='files'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/files');view.innerHTML=j.files.map(x=>'<div class="project" onclick="openFile(\''+String(x).replace(/'/g,"\\'")+'\')">'+esc(x)+'</div>').join('')}else{const j=await api('/v1/projects/'+encodeURIComponent(current)+'/status');view.innerHTML='<pre>'+esc(j.status.raw)+'</pre>'}}
+async function openFile(file){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/file/'+file.split('/').map(encodeURIComponent).join('/'));document.querySelector('#view').innerHTML='<div class="title">'+esc(file)+'</div><pre>'+esc(j.content)+'</pre>'}
+boot().catch(e=>document.querySelector('#projects').innerHTML='<div class="section">'+esc(e.message)+'</div>');
+</script>
+</body></html>
