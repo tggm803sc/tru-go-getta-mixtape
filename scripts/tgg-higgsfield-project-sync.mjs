@@ -18,6 +18,7 @@ if(!(await projectExists(PROJECT_ID))){
 const sourceFiles=[
   'tgg-higgsfield/README.md',
   'tgg-higgsfield/presets.json',
+  'tgg-higgsfield/workspace.json',
   'tgg-higgsfield/bridge.mjs'
 ];
 
