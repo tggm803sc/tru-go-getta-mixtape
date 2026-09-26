@@ -1,0 +1,624 @@
+/* TGG WORLD 1000X MASTER VISUAL OVERRIDE */
+:root{
+  --tgg-accent:#e50914;
+  --tgg-gold:#f5b942;
+  --tgg-glass:rgba(8,10,14,.72);
+  --tgg-line:rgba(255,255,255,.12);
+  --tgg-shadow:0 18px 55px rgba(0,0,0,.42);
+}
+html[data-tgg-1000x="1"] body{background:#05070a!important;overflow-x:hidden}
+html[data-tgg-1000x="1"] .game-shell{max-width:none!important}
+html[data-tgg-1000x="1"] .city{
+  min-height:min(74vh,820px)!important;
+  border-radius:22px!important;
+  overflow:hidden!important;
+  box-shadow:inset 0 0 80px rgba(0,0,0,.35),var(--tgg-shadow)!important;
+  transform:translateZ(0);
+}
+html[data-tgg-1000x="1"] .city:after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:15;
+  background:
+    radial-gradient(1000px 520px at 50% -10%,rgba(255,255,255,.06),transparent 58%),
+    linear-gradient(180deg,rgba(50,80,120,.03),transparent 45%,rgba(0,0,0,.2));
+}
+html[data-tgg-time="night"] .city:after{
+  background:
+    radial-gradient(900px 480px at 50% -12%,rgba(55,90,180,.12),transparent 60%),
+    linear-gradient(180deg,rgba(6,12,28,.18),transparent 42%,rgba(0,0,0,.38));
+}
+html[data-tgg-weather="rain"] .city:after{
+  background:
+    linear-gradient(115deg,transparent 0 46%,rgba(190,220,255,.035) 47% 48%,transparent 49% 100%),
+    linear-gradient(180deg,rgba(90,130,170,.09),rgba(0,0,0,.28));
+  background-size:26px 26px,auto;
+}
+html[data-tgg-1000x="1"] .tower,
+html[data-tgg-1000x="1"] [class*="building"],
+html[data-tgg-1000x="1"] [class*="storefront"]{
+  filter:saturate(1.12) contrast(1.05) brightness(.98);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 18px 40px rgba(0,0,0,.24);
+}
+html[data-tgg-time="night"] .tower,
+html[data-tgg-time="night"] [class*="building"]{filter:saturate(1.18) contrast(1.08) brightness(.88) drop-shadow(0 0 12px rgba(90,140,255,.08))}
+html[data-tgg-1000x="1"] [class*="road"],
+html[data-tgg-1000x="1"] [class*="street"]{filter:contrast(1.06) saturate(.94)}
+html[data-tgg-weather="rain"] [class*="road"],
+html[data-tgg-weather="rain"] [class*="street"]{filter:contrast(1.12) saturate(1.05) brightness(.9)}
+html[data-tgg-1000x="1"] .player,
+html[data-tgg-1000x="1"] [class*="avatar"]{filter:drop-shadow(0 14px 12px rgba(0,0,0,.34))}
+html[data-tgg-1000x="1"] [class*="vehicle"],
+html[data-tgg-1000x="1"] [class*="car"]{
+  filter:saturate(1.15) contrast(1.06) drop-shadow(0 12px 14px rgba(0,0,0,.28));
+  transition:filter .18s ease,transform .12s linear;
+}
+html[data-tgg-driving="1"] [class*="car"]{filter:saturate(1.2) contrast(1.08) drop-shadow(0 16px 18px rgba(0,0,0,.35))}
+html[data-tgg-1000x="1"] .vehicle-hud,
+html[data-tgg-1000x="1"] .player-move-hud,
+html[data-tgg-1000x="1"] .nav-hud,
+html[data-tgg-1000x="1"] .game-controls,
+html[data-tgg-1000x="1"] [class*="panel"]{
+  backdrop-filter:blur(14px) saturate(1.18);
+  background:var(--tgg-glass)!important;
+  border-color:var(--tgg-line)!important;
+  box-shadow:var(--tgg-shadow)!important;
+}
+html[data-tgg-1000x="1"] .actions{gap:8px!important}
+html[data-tgg-1000x="1"] .actions button{
+  min-height:42px!important;border-radius:12px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025))!important;
+  border:1px solid rgba(255,255,255,.1)!important;
+}
+html[data-tgg-1000x="1"] .actions .action-primary{
+  background:linear-gradient(180deg,#ef2633,#b60712)!important;
+  border-color:rgba(255,80,90,.45)!important;
+}
+html[data-tgg-1000x="1"] body:not([data-tgg-ui-expanded="1"]) .actions button:nth-child(n+10){display:none}
+html[data-tgg-1000x="1"] .city-title{max-width:360px}
+html[data-tgg-1000x="1"] .npc-dialogue{max-width:min(560px,82vw)!important}
+html[data-tgg-district="studio"]{--tgg-district-glow:rgba(229,9,20,.18)}
+html[data-tgg-district="downtown"]{--tgg-district-glow:rgba(70,135,255,.17)}
+html[data-tgg-district="media"]{--tgg-district-glow:rgba(166,90,255,.18)}
+html[data-tgg-district="park"]{--tgg-district-glow:rgba(45,190,120,.14)}
+html[data-tgg-district="home"]{--tgg-district-glow:rgba(245,185,66,.12)}
+html[data-tgg-district="garage"]{--tgg-district-glow:rgba(70,210,220,.14)}
+html[data-tgg-1000x="1"] .city{background-image:radial-gradient(900px 500px at 55% 0,var(--tgg-district-glow,rgba(229,9,20,.08)))!important}
+html[data-tgg-motion="walk"] .player{animation:tggWalkBob .42s ease-in-out infinite alternate}
+html[data-tgg-motion="sprint"] .player{animation:tggSprintBob .25s ease-in-out infinite alternate}
+@keyframes tggWalkBob{to{transform:translateY(-2px)}}
+@keyframes tggSprintBob{to{transform:translateY(-4px) scaleY(.985)}}
+@media(max-width:900px){
+  html[data-tgg-1000x="1"] .city{min-height:64vh!important;border-radius:16px!important}
+  html[data-tgg-1000x="1"] .game-controls{padding:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-tgg-1000x="1"] *{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+}
+
+/* TGG PLAYABLE VISUAL CATCH-UP MEGA PASS 2026 */
+html[data-tgg-1000x="1"] #city3d,
+html[data-tgg-1000x="1"] .city3d,
+html[data-tgg-1000x="1"] .city{
+  transform:scale(.94) translateZ(0)!important;
+  transform-origin:50% 10%!important;
+  width:106.4%!important;
+  margin-left:-3.2%!important;
+  min-height:min(78vh,880px)!important;
+}
+html[data-tgg-1000x="1"] [class*="road"],
+html[data-tgg-1000x="1"] [class*="street"],
+html[data-tgg-1000x="1"] [class*="lane"],
+html[data-tgg-1000x="1"] [class*="highway"]{
+  background-color:#24272c!important;
+  color:#f4f4f4;
+  filter:contrast(1.12) saturate(.62) brightness(.9)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),inset 0 -1px 0 rgba(0,0,0,.42)!important;
+}
+html[data-tgg-1000x="1"] [class*="grass"],
+html[data-tgg-1000x="1"] [class*="lawn"],
+html[data-tgg-1000x="1"] [class*="park"]{
+  filter:saturate(.78) brightness(.88) contrast(1.06);
+}
+html[data-tgg-1000x="1"] [class*="vehicle"],
+html[data-tgg-1000x="1"] [class*="car"]{
+  filter:saturate(1.08) contrast(1.11) brightness(.98) drop-shadow(0 16px 15px rgba(0,0,0,.38))!important;
+  outline:1px solid rgba(255,255,255,.055);
+  outline-offset:-1px;
+}
+html[data-tgg-driving="1"] [class*="vehicle"],
+html[data-tgg-driving="1"] [class*="car"]{
+  filter:saturate(1.12) contrast(1.12) brightness(1.01) drop-shadow(0 20px 18px rgba(0,0,0,.42))!important;
+}
+html[data-tgg-1000x="1"] [class*="npc"],
+html[data-tgg-1000x="1"] [class*="pedestrian"],
+html[data-tgg-1000x="1"] [class*="citizen"]{
+  filter:contrast(1.08) saturate(.96) drop-shadow(0 7px 8px rgba(0,0,0,.32));
+}
+html[data-tgg-1000x="1"] .city-title,
+html[data-tgg-1000x="1"] .vehicle-hud,
+html[data-tgg-1000x="1"] .player-move-hud,
+html[data-tgg-1000x="1"] .nav-hud{
+  transform:scale(.92);
+  transform-origin:top left;
+}
+html[data-tgg-1000x="1"] .vehicle-hud,
+html[data-tgg-1000x="1"] .player-move-hud,
+html[data-tgg-1000x="1"] .nav-hud{opacity:.88}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .city-title,
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .npc-dialogue{opacity:.42!important}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .vehicle-hud,
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .player-move-hud,
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .nav-hud{opacity:.64!important}
+html[data-tgg-time="night"] [class*="road"],
+html[data-tgg-time="night"] [class*="street"],
+html[data-tgg-time="night"] [class*="lane"]{
+  background-color:#171b21!important;
+  box-shadow:inset 0 1px 0 rgba(150,190,255,.06),0 0 18px rgba(55,90,170,.035)!important;
+}
+html[data-tgg-weather="rain"] [class*="road"],
+html[data-tgg-weather="rain"] [class*="street"],
+html[data-tgg-weather="rain"] [class*="lane"]{
+  background-color:#1c2229!important;
+  filter:contrast(1.2) saturate(.78) brightness(.82)!important;
+}
+@media(max-width:900px){
+  html[data-tgg-1000x="1"] #city3d,
+  html[data-tgg-1000x="1"] .city3d,
+  html[data-tgg-1000x="1"] .city{
+    transform:none!important;
+    width:100%!important;
+    margin-left:0!important;
+  }
+}
+
+
+/* TGG MAX-BATCH WORLD POLISH 2026 */
+html[data-tgg-1000x="1"] .city,
+html[data-tgg-1000x="1"] #city3d{
+  background:
+    radial-gradient(900px 520px at 55% -8%,rgba(110,150,255,.08),transparent 60%),
+    linear-gradient(180deg,#0a0f18 0%,#111722 42%,#07090d 100%)!important;
+}
+html[data-tgg-time="golden"] .city,
+html[data-tgg-time="golden"] #city3d{
+  background:
+    radial-gradient(900px 500px at 55% 0,rgba(255,170,90,.12),transparent 58%),
+    linear-gradient(180deg,#17141a 0%,#11151c 48%,#080a0e 100%)!important;
+}
+html[data-tgg-time="night"] .city,
+html[data-tgg-time="night"] #city3d{
+  background:
+    radial-gradient(900px 520px at 52% -4%,rgba(68,102,205,.14),transparent 58%),
+    linear-gradient(180deg,#050810 0%,#0a101a 45%,#030509 100%)!important;
+}
+html[data-tgg-1000x="1"] [class*="road"],
+html[data-tgg-1000x="1"] [class*="street"],
+html[data-tgg-1000x="1"] [class*="lane"],
+html[data-tgg-1000x="1"] [class*="highway"]{
+  background-image:
+    linear-gradient(90deg,transparent 0 48%,rgba(255,255,255,.025) 48% 52%,transparent 52% 100%)!important;
+  background-blend-mode:screen;
+}
+html[data-tgg-1000x="1"] [class*="road"]::after,
+html[data-tgg-1000x="1"] [class*="street"]::after{
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  inset:0;
+  opacity:.18;
+  background:repeating-linear-gradient(90deg,transparent 0 38px,rgba(255,255,255,.08) 38px 42px,transparent 42px 80px);
+}
+html[data-tgg-1000x="1"] [class*="vehicle"],
+html[data-tgg-1000x="1"] [class*="car"]{
+  background-image:linear-gradient(155deg,rgba(255,255,255,.15),transparent 28%,rgba(255,255,255,.03) 52%,rgba(0,0,0,.12))!important;
+  border-radius:10px!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 -1px 0 rgba(0,0,0,.28),
+    0 18px 28px rgba(0,0,0,.34)!important;
+}
+html[data-tgg-driving="1"] [class*="vehicle"],
+html[data-tgg-driving="1"] [class*="car"]{
+  transform:translateZ(0);
+}
+html[data-tgg-1000x="1"] [class*="light"],
+html[data-tgg-1000x="1"] [class*="lamp"],
+html[data-tgg-1000x="1"] [class*="neon"]{
+  filter:brightness(1.12) saturate(1.12) drop-shadow(0 0 10px rgba(140,180,255,.18));
+}
+html[data-tgg-1000x="1"] [class*="building"],
+html[data-tgg-1000x="1"] .tower{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.035),transparent 26%,rgba(0,0,0,.08))!important;
+}
+html[data-tgg-1000x="1"] .vehicle-hud,
+html[data-tgg-1000x="1"] .player-move-hud,
+html[data-tgg-1000x="1"] .nav-hud{
+  max-width:min(280px,28vw)!important;
+  padding:8px 10px!important;
+  border-radius:12px!important;
+}
+html[data-tgg-1000x="1"] .city-title{
+  max-width:300px!important;
+  font-size:.92em;
+}
+html[data-tgg-1000x="1"] .npc-dialogue{
+  max-width:min(480px,64vw)!important;
+  padding:10px 12px!important;
+  border-radius:12px!important;
+}
+html[data-tgg-1000x="1"] [class*="npc"],
+html[data-tgg-1000x="1"] [class*="pedestrian"]{
+  transition:filter .18s ease,opacity .18s ease;
+}
+html[data-tgg-driving="1"] [class*="npc"],
+html[data-tgg-driving="1"] [class*="pedestrian"]{
+  opacity:.86;
+}
+html[data-tgg-1000x="1"] [class*="traffic"]{
+  filter:saturate(.96) contrast(1.05);
+}
+html[data-tgg-quality="balanced"] [class*="building"],
+html[data-tgg-quality="balanced"] [class*="vehicle"],
+html[data-tgg-quality="balanced"] [class*="npc"]{
+  box-shadow:none!important;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] #tgg-clean-hud{
+  opacity:.82;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .topbar,
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .city-title{
+  transform:scale(.9);
+  transform-origin:top left;
+}
+@media(min-width:1200px){
+  html[data-tgg-1000x="1"] #city3d,
+  html[data-tgg-1000x="1"] .city{
+    min-height:min(82vh,920px)!important;
+  }
+}
+
+
+/* TGG ULTRA MEGA CITY DEPTH PASS 2026 */
+html[data-tgg-1000x="1"] .city,
+html[data-tgg-1000x="1"] #city3d{
+  perspective:1400px;
+  isolation:isolate;
+}
+html[data-tgg-1000x="1"] [class*="building"],
+html[data-tgg-1000x="1"] .tower,
+html[data-tgg-1000x="1"] [class*="storefront"]{
+  filter:saturate(1.02) contrast(1.09) brightness(.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 0 -18px 34px rgba(0,0,0,.12),
+    0 22px 46px rgba(0,0,0,.28)!important;
+}
+html[data-tgg-1000x="1"] [class*="window"]{
+  filter:brightness(1.06) saturate(.92);
+}
+html[data-tgg-time="night"] [class*="window"],
+html[data-tgg-time="night"] [class*="sign"]{
+  filter:brightness(1.22) saturate(1.08) drop-shadow(0 0 8px rgba(120,160,255,.16));
+}
+html[data-tgg-1000x="1"] [class*="sidewalk"],
+html[data-tgg-1000x="1"] [class*="curb"]{
+  background-color:#555b66!important;
+  filter:saturate(.35) contrast(1.1) brightness(.84)!important;
+}
+html[data-tgg-1000x="1"] [class*="crosswalk"]{
+  filter:brightness(1.04) contrast(1.08) saturate(.45)!important;
+}
+html[data-tgg-1000x="1"] [class*="tree"],
+html[data-tgg-1000x="1"] [class*="plant"]{
+  filter:saturate(.72) contrast(1.04) brightness(.88);
+}
+html[data-tgg-1000x="1"] [class*="vehicle"],
+html[data-tgg-1000x="1"] [class*="car"]{
+  backdrop-filter:none!important;
+  will-change:transform;
+}
+html[data-tgg-1000x="1"] [class*="wheel"],
+html[data-tgg-1000x="1"] [class*="tire"]{
+  filter:contrast(1.18) brightness(.72);
+}
+html[data-tgg-1000x="1"] [class*="headlight"],
+html[data-tgg-1000x="1"] [class*="brake"]{
+  filter:brightness(1.22) saturate(1.08) drop-shadow(0 0 8px rgba(255,255,255,.16));
+}
+html[data-tgg-1000x="1"] [class*="npc"],
+html[data-tgg-1000x="1"] [class*="pedestrian"],
+html[data-tgg-1000x="1"] [class*="citizen"]{
+  transform-origin:center bottom;
+}
+html[data-tgg-1000x="1"] .topbar,
+html[data-tgg-1000x="1"] .city-title,
+html[data-tgg-1000x="1"] .vehicle-hud,
+html[data-tgg-1000x="1"] .player-move-hud,
+html[data-tgg-1000x="1"] .nav-hud,
+html[data-tgg-1000x="1"] #tgg-clean-hud{
+  transition:opacity .18s ease,transform .18s ease,filter .18s ease;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .topbar{
+  opacity:.54!important;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] #tgg-clean-hud{
+  transform:scale(.94);
+  transform-origin:bottom center;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .vehicle-hud{
+  opacity:.72!important;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .player-move-hud{
+  opacity:.28!important;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .nav-hud{
+  opacity:.7!important;
+}
+html[data-tgg-1000x="1"] body[data-tgg-focus-drive="1"] .npc-dialogue:not(.active){
+  opacity:.16!important;
+}
+html[data-tgg-quality="balanced"] .city:after,
+html[data-tgg-quality="balanced"] #city3d:after{
+  opacity:.65;
+}
+html[data-tgg-quality="balanced"] [class*="light"],
+html[data-tgg-quality="balanced"] [class*="neon"]{
+  filter:brightness(1.04)!important;
+}
+html[data-tgg-quality="balanced"] [class*="vehicle"],
+html[data-tgg-quality="balanced"] [class*="car"]{
+  filter:saturate(1.02) contrast(1.06)!important;
+}
+html[data-tgg-weather="rain"] [class*="building"],
+html[data-tgg-weather="rain"] .tower{
+  filter:saturate(.9) contrast(1.12) brightness(.84)!important;
+}
+html[data-tgg-weather="rain"] [class*="vehicle"],
+html[data-tgg-weather="rain"] [class*="car"]{
+  filter:saturate(1.02) contrast(1.12) brightness(.88) drop-shadow(0 18px 20px rgba(0,0,0,.42))!important;
+}
+@media(max-width:1100px){
+  html[data-tgg-1000x="1"] .vehicle-hud,
+  html[data-tgg-1000x="1"] .player-move-hud,
+  html[data-tgg-1000x="1"] .nav-hud{
+    max-width:min(245px,31vw)!important;
+  }
+}
+
+
+/* TGG ULTRA-MAX INTERACTION + AVATAR + ATMOSPHERE PASS 2026 */
+html[data-tgg-1000x="1"] [class*="destination"],
+html[data-tgg-1000x="1"] [class*="marker"],
+html[data-tgg-1000x="1"] [class*="mission"]{
+  filter:saturate(1.05) contrast(1.08) drop-shadow(0 0 10px rgba(255,255,255,.08));
+}
+html[data-tgg-1000x="1"] [class*="destination"] [class*="label"],
+html[data-tgg-1000x="1"] [class*="marker"] [class*="label"],
+html[data-tgg-1000x="1"] [class*="mission"] [class*="label"]{
+  background:rgba(5,8,14,.76)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:10px!important;
+  padding:5px 8px!important;
+  backdrop-filter:blur(8px);
+}
+html[data-tgg-1000x="1"] [class*="interact"],
+html[data-tgg-1000x="1"] [class*="prompt"]{
+  opacity:.9;
+  transform:scale(.96);
+  transform-origin:center;
+}
+html[data-tgg-1000x="1"] [class*="avatar"],
+html[data-tgg-1000x="1"] .player{
+  filter:contrast(1.08) saturate(1.04) drop-shadow(0 14px 14px rgba(0,0,0,.36))!important;
+}
+html[data-tgg-1000x="1"] [data-tgg-avatar-outfit="jacket"] .player,
+html[data-tgg-1000x="1"] [data-tgg-avatar-outfit="jacket"] [class*="avatar"]{
+  filter:contrast(1.1) saturate(1.03) drop-shadow(0 16px 15px rgba(0,0,0,.4))!important;
+}
+html[data-tgg-1000x="1"] .city:before,
+html[data-tgg-1000x="1"] #city3d:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:4;
+  background:
+    radial-gradient(900px 340px at 50% 0,rgba(255,255,255,.025),transparent 66%),
+    linear-gradient(180deg,transparent 0 58%,rgba(0,0,0,.08) 100%);
+  mix-blend-mode:screen;
+}
+html[data-tgg-time="golden"] .city:before,
+html[data-tgg-time="golden"] #city3d:before{
+  background:
+    radial-gradient(1000px 420px at 55% 0,rgba(255,183,95,.055),transparent 64%),
+    linear-gradient(180deg,transparent 0 62%,rgba(0,0,0,.1) 100%);
+}
+html[data-tgg-time="night"] .city:before,
+html[data-tgg-time="night"] #city3d:before{
+  background:
+    radial-gradient(900px 420px at 50% 0,rgba(85,120,220,.06),transparent 62%),
+    linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.16));
+}
+html[data-tgg-weather="rain"] .city:before,
+html[data-tgg-weather="rain"] #city3d:before{
+  background:
+    linear-gradient(115deg,transparent 0 47%,rgba(180,215,255,.026) 48% 49%,transparent 50% 100%),
+    linear-gradient(180deg,rgba(70,100,140,.035),rgba(0,0,0,.18));
+  background-size:34px 34px,auto;
+}
+html[data-tgg-1000x="1"] body[data-tgg-interaction-near="1"] #tgg-clean-hud{
+  opacity:.68;
+}
+html[data-tgg-1000x="1"] body[data-tgg-interaction-near="1"] .npc-dialogue{
+  opacity:1!important;
+  transform:scale(1)!important;
+}
+html[data-tgg-quality="balanced"] .city:before,
+html[data-tgg-quality="balanced"] #city3d:before{
+  display:none;
+}
+html[data-tgg-quality="balanced"] [class*="destination"],
+html[data-tgg-quality="balanced"] [class*="marker"],
+html[data-tgg-quality="balanced"] [class*="mission"]{
+  filter:none!important;
+}
+@media(max-width:900px){
+  html[data-tgg-1000x="1"] [class*="destination"] [class*="label"],
+  html[data-tgg-1000x="1"] [class*="marker"] [class*="label"]{
+    font-size:.82em!important;
+    padding:4px 6px!important;
+  }
+}
+
+
+/* TGG MEGA WORLD DENSITY PRESENTATION 2026 */
+html[data-tgg-world-density="mega"] .city,
+html[data-tgg-world-density="mega"] #city3d{
+  filter:contrast(1.03) saturate(.98);
+}
+html[data-tgg-world-density="mega"] [class*="destination"],
+html[data-tgg-world-density="mega"] [class*="marker"]{
+  opacity:.9;
+}
+html[data-tgg-world-density="mega"] [class*="traffic"]{
+  opacity:.96;
+}
+html[data-tgg-world-density="mega"] [class*="npc"],
+html[data-tgg-world-density="mega"] [class*="pedestrian"]{
+  opacity:.92;
+}
+html[data-tgg-world-density="mega"] body[data-tgg-focus-drive="1"] [class*="destination"],
+html[data-tgg-world-density="mega"] body[data-tgg-focus-drive="1"] [class*="marker"]{
+  opacity:.7;
+}
+html[data-tgg-quality="balanced"][data-tgg-world-density="mega"] [class*="traffic"],
+html[data-tgg-quality="balanced"][data-tgg-world-density="mega"] [class*="npc"],
+html[data-tgg-quality="balanced"][data-tgg-world-density="mega"] [class*="pedestrian"]{
+  filter:none!important;
+}
+
+
+/* TGG FULL CITY LIFE PRESENTATION 2026 */
+html[data-tgg-full-city-life="1"] .city,
+html[data-tgg-full-city-life="1"] #city3d{
+  filter:contrast(1.035) saturate(1.01);
+}
+html[data-tgg-full-city-life="1"] [class*="destination"],
+html[data-tgg-full-city-life="1"] [class*="marker"]{
+  opacity:.88;
+}
+html[data-tgg-full-city-life="1"] [class*="building"],
+html[data-tgg-full-city-life="1"] .tower{
+  filter:contrast(1.1) saturate(1.03) brightness(.95);
+}
+html[data-tgg-full-city-life="1"] [class*="vehicle"],
+html[data-tgg-full-city-life="1"] [class*="car"]{
+  filter:saturate(1.06) contrast(1.1) drop-shadow(0 16px 16px rgba(0,0,0,.34))!important;
+}
+html[data-tgg-full-city-life="1"] body[data-tgg-focus-drive="1"] [class*="destination"],
+html[data-tgg-full-city-life="1"] body[data-tgg-focus-drive="1"] [class*="marker"]{
+  opacity:.62;
+}
+html[data-tgg-quality="balanced"][data-tgg-full-city-life="1"] .city,
+html[data-tgg-quality="balanced"][data-tgg-full-city-life="1"] #city3d{
+  filter:contrast(1.02) saturate(.98);
+}
+
+
+/* TGG PLAYTEST QUICK ACCESS 2026 */
+#tgg-playtest-quick{
+  position:fixed;
+  left:50%;
+  bottom:74px;
+  transform:translateX(-50%);
+  z-index:9996;
+  display:flex;
+  gap:6px;
+  max-width:min(94vw,1100px);
+  overflow-x:auto;
+  padding:7px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  background:rgba(5,8,14,.74);
+  backdrop-filter:blur(14px) saturate(1.15);
+  box-shadow:0 16px 38px rgba(0,0,0,.34);
+  scrollbar-width:none;
+}
+#tgg-playtest-quick::-webkit-scrollbar{display:none}
+#tgg-playtest-quick button{
+  flex:0 0 auto;
+  min-height:34px;
+  padding:7px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.055);
+  color:#fff;
+  font:800 11px/1 system-ui,sans-serif;
+  letter-spacing:.03em;
+  cursor:pointer;
+}
+#tgg-playtest-quick button:hover{
+  background:rgba(255,255,255,.1);
+}
+html[data-tgg-driving="1"] #tgg-playtest-quick{
+  opacity:.58;
+  transform:translateX(-50%) scale(.94);
+  transform-origin:bottom center;
+}
+html[data-tgg-quality="balanced"] #tgg-playtest-quick{
+  backdrop-filter:none;
+  background:rgba(5,8,14,.9);
+}
+@media(max-width:900px){
+  #tgg-playtest-quick{
+    bottom:66px;
+    max-width:96vw;
+  }
+  #tgg-playtest-quick button{
+    min-height:32px;
+    padding:6px 8px;
+    font-size:10px;
+  }
+}
+
+
+/* TGG GRAPHICS DIRECTOR V50 — final cinematic/open-world visual authority */
+html[data-tgg-graphics-director-v50="1"] #city3d canvas,
+html[data-tgg-graphics-director-v50="1"] .city3d canvas,
+html[data-tgg-graphics-director-v50="1"] canvas[data-engine="three"]{
+  filter:contrast(1.055) saturate(1.08) brightness(1.015);
+}
+html[data-tgg-graphics-look-v50="cinematic-open-world"] .city,
+html[data-tgg-graphics-look-v50="cinematic-open-world"] #city3d{
+  background:
+    radial-gradient(1100px 640px at 52% -12%,rgba(126,162,220,.10),transparent 62%),
+    linear-gradient(180deg,#0a111d 0%,#101722 48%,#070a0f 100%)!important;
+}
+html[data-tgg-time="golden"][data-tgg-graphics-look-v50="cinematic-open-world"] .city,
+html[data-tgg-time="golden"][data-tgg-graphics-look-v50="cinematic-open-world"] #city3d{
+  background:
+    radial-gradient(1000px 600px at 56% -8%,rgba(255,177,104,.18),transparent 60%),
+    linear-gradient(180deg,#1c171a 0%,#161821 48%,#080a0e 100%)!important;
+}
+html[data-tgg-time="night"][data-tgg-graphics-look-v50="cinematic-open-world"] .city,
+html[data-tgg-time="night"][data-tgg-graphics-look-v50="cinematic-open-world"] #city3d{
+  background:
+    radial-gradient(1050px 620px at 52% -8%,rgba(68,108,218,.18),transparent 62%),
+    linear-gradient(180deg,#030711 0%,#08111d 50%,#020408 100%)!important;
+}
+html[data-tgg-graphics-look-v50="cinematic-open-world"] [class*="road"],
+html[data-tgg-graphics-look-v50="cinematic-open-world"] [class*="street"],
+html[data-tgg-graphics-look-v50="cinematic-open-world"] [class*="highway"]{
+  filter:contrast(1.16) saturate(.72) brightness(.86)!important;
+}
+html[data-tgg-weather="rain"][data-tgg-graphics-look-v50="cinematic-open-world"] [class*="road"],
+html[data-tgg-weather="rain"][data-tgg-graphics-look-v50="cinematic-open-world"] [class*="street"]{
+  filter:contrast(1.22) saturate(.86) brightness(.80)!important;
+  box-shadow:inset 0 1px 0 rgba(205,225,255,.09),0 0 18px rgba(90,140,210,.05)!important;
+}
+html[data-tgg-graphics-look-v50="cinematic-open-world"] [class*="vehicle"],
+html[data-tgg-graphics-look-v50="cinematic-open-world"] [class*="car"]{
+  filter:saturate(1.12) contrast(1.10) brightness(1.01) drop-shadow(0 18px 20px rgba(0,0,0,.44))!important;
+}
+html[data-tgg-quality="balanced"][data-tgg-graphics-look-v50="cinematic-open-world"] #city3d canvas{
+  filter:contrast(1.035) saturate(1.04) brightness(1.01);
+}
