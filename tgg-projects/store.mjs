@@ -44,6 +44,14 @@ export async function ensureRoot(){await fs.mkdir(ROOT,{recursive:true})}
 export async function projectExists(id){
   try{return (await fs.stat(path.join(projectDir(id),'.git'))).isDirectory()}catch{return false}
 }
+export async function configureProjectGitServer(id){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  await git(dir,['config','http.receivepack','true']);
+  await git(dir,['config','receive.denyCurrentBranch','updateInstead']);
+  await git(dir,['config','receive.denyNonFastForwards','false']);
+  return {ok:true,project_id:safeId(id)};
+}
 export async function createProject({id,name,description='',default_branch='main'}){
   await ensureRoot();
   id=safeId(id);default_branch=safeRef(default_branch);
@@ -53,6 +61,8 @@ export async function createProject({id,name,description='',default_branch='main
   await git(dir,['init','-b',default_branch]);
   await git(dir,['config','user.name',process.env.TGG_GIT_USER_NAME||'TGG']);
   await git(dir,['config','user.email',process.env.TGG_GIT_USER_EMAIL||'tgg@local']);
+  await git(dir,['config','http.receivepack','true']);
+  await git(dir,['config','receive.denyCurrentBranch','updateInstead']);
   const meta={schema:'tgg.project/v1',id,name:String(name||id),description:String(description||''),default_branch,owner:'TGG',created_at:new Date().toISOString()};
   await fs.writeFile(path.join(dir,'tgg-project.json'),JSON.stringify(meta,null,2)+'\n',{mode:0o600});
   await fs.writeFile(path.join(dir,'README.md'),'# '+meta.name+'\n\n'+meta.description+'\n');
@@ -147,6 +157,8 @@ export async function importGitProject({id,remote_url,name='',description='',def
   await git(ROOT,['clone','--no-hardlinks',remote,id]);
   await git(dir,['config','user.name',process.env.TGG_GIT_USER_NAME||'TGG']);
   await git(dir,['config','user.email',process.env.TGG_GIT_USER_EMAIL||'tgg@local']);
+  await git(dir,['config','http.receivepack','true']);
+  await git(dir,['config','receive.denyCurrentBranch','updateInstead']);
   const current=(await git(dir,['branch','--show-current'],{allowFailure:true})).stdout||default_branch;
   const meta={
     schema:'tgg.project/v1',
