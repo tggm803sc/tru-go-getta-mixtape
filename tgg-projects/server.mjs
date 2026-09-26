@@ -2,12 +2,14 @@ import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {spawn} from 'node:child_process';
 import {
   ROOT,ensureRoot,listProjects,getProject,createProject,importGitProject,listBranches,createBranch,
   listCommits,listFiles,readFileAtRef,writeFileAndCommit,getStatus,
   listIssues,createIssue,updateIssue,listPullRequests,createPullRequest,mergePullRequest,
   compareRefs,listTags,createTag,listReleases,createRelease,saveProjectArtifact,
-  searchProject,getProjectActivity,createProjectBundle,listActions,runProjectAction
+  searchProject,getProjectActivity,createProjectBundle,listActions,runProjectAction,
+  projectExists,syncProjectWorktree
 } from './store.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
@@ -39,6 +41,94 @@ function errorStatus(message){
   if(/invalid|required/.test(message))return 400;
   return 500;
 }
+async function gitSmartHttp(req,res,url){
+  const match=url.pathname.match(/^\/git\/([^/]+)\.git(?:\/(.*))?$/);
+  if(!match)return false;
+  const projectId=dec(match[1]);
+  if(!(await projectExists(projectId))){
+    send(res,404,{ok:false,error:'project_not_found'});
+    return true;
+  }
+  if(TOKEN&&!auth(req)){
+    res.writeHead(401,{'www-authenticate':'Basic realm="TGG Source"','cache-control':'no-store'});
+    res.end('Authentication required');
+    return true;
+  }
+
+  const rest=String(match[2]||'');
+  const isReceive=req.method==='POST'&&rest==='git-receive-pack';
+  if(isReceive){
+    const project=await getProject(projectId);
+    if(project.dirty){
+      send(res,409,{ok:false,error:'project_dirty_git_receive_blocked'});
+      return true;
+    }
+  }
+
+  const child=spawn('git',['http-backend'],{
+    env:{
+      ...process.env,
+      GIT_PROJECT_ROOT:ROOT,
+      GIT_HTTP_EXPORT_ALL:'1',
+      PATH_INFO:'/'+projectId+'/.git/'+rest,
+      REQUEST_METHOD:String(req.method||'GET'),
+      QUERY_STRING:url.searchParams.toString(),
+      CONTENT_TYPE:String(req.headers['content-type']||''),
+      CONTENT_LENGTH:String(req.headers['content-length']||''),
+      REMOTE_USER:'TGG',
+      REMOTE_ADDR:String(req.socket?.remoteAddress||''),
+      HTTP_GIT_PROTOCOL:String(req.headers['git-protocol']||'')
+    },
+    stdio:['pipe','pipe','pipe']
+  });
+
+  const out=[],err=[];
+  child.stdout.on('data',chunk=>out.push(chunk));
+  child.stderr.on('data',chunk=>err.push(chunk));
+  req.pipe(child.stdin);
+
+  const code=await new Promise((resolve,reject)=>{
+    child.on('error',reject);
+    child.on('close',resolve);
+  });
+
+  const raw=Buffer.concat(out);
+  let split=raw.indexOf(Buffer.from('\r\n\r\n'));
+  let sep=4;
+  if(split<0){split=raw.indexOf(Buffer.from('\n\n'));sep=2}
+  if(split<0){
+    send(res,500,{ok:false,error:'git_http_backend_invalid_response',detail:Buffer.concat(err).toString('utf8').slice(-2000)});
+    return true;
+  }
+
+  const headerText=raw.subarray(0,split).toString('utf8');
+  const payload=raw.subarray(split+sep);
+  let status=code===0?200:500;
+  const headers={'cache-control':'no-store'};
+  for(const line of headerText.split(/\r?\n/)){
+    const i=line.indexOf(':');
+    if(i<0)continue;
+    const key=line.slice(0,i).trim();
+    const value=line.slice(i+1).trim();
+    if(key.toLowerCase()==='status'){
+      const parsed=Number(value.split(' ')[0]);
+      if(Number.isInteger(parsed))status=parsed;
+    }else headers[key]=value;
+  }
+
+  if(isReceive&&code===0&&status<400){
+    try{await syncProjectWorktree(projectId)}
+    catch(error){
+      send(res,409,{ok:false,error:String(error?.message||error)});
+      return true;
+    }
+  }
+
+  res.writeHead(status,headers);
+  res.end(payload);
+  return true;
+}
+
 async function higgsfieldProxy(req,res,url){
   const target=url.pathname.replace(/^\/v1\/higgsfield/,'/v1')+url.search;
   const method=req.method||'GET';
@@ -73,6 +163,7 @@ const server=http.createServer(async(req,res)=>{
       return send(res,200,{ok:true,service:'tgg-projects',owner:'TGG',storage_root:ROOT,auth_required:Boolean(TOKEN),time:new Date().toISOString()});
     }
     if(method==='GET'&&(url.pathname==='/'||url.pathname==='/app'))return dashboard(res);
+    if(url.pathname.startsWith('/git/')&&await gitSmartHttp(req,res,url))return;
     if(url.pathname.startsWith('/v1/')&&method!=='GET'&&!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
     if(url.pathname==='/v1/higgsfield'||url.pathname.startsWith('/v1/higgsfield/')){
       return higgsfieldProxy(req,res,url);
