@@ -456,3 +456,89 @@ export async function createProjectBundle(id,{ref='--all'}={}){
     created_at:now()
   };
 }
+
+
+function allowedActionNames(){
+  return new Set(
+    String(process.env.TGG_ACTIONS_ALLOWED||'check,test,build')
+      .split(',')
+      .map(x=>x.trim())
+      .filter(Boolean)
+  );
+}
+
+export async function listActions(id){
+  return (await readMetaCollection(id,'actions')).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
+
+export async function runProjectAction(id,{action,ref='HEAD',timeout_ms=300000}={}){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  action=String(action||'').trim();
+  if(!/^[a-zA-Z0-9:_-]{1,80}$/.test(action))throw new Error('invalid_action');
+  if(!allowedActionNames().has(action))throw new Error('action_not_allowed');
+  ref=safeRef(ref);
+  timeout_ms=Math.max(1000,Math.min(30*60*1000,Number(timeout_ms)||300000));
+
+  const actionId=itemId('action');
+  const runRoot=path.resolve(process.env.TGG_ACTION_RUN_ROOT||'/data/tgg-action-runs');
+  const worktree=path.join(runRoot,safeId(id),actionId);
+  await fs.mkdir(path.dirname(worktree),{recursive:true});
+
+  const resolved=(await git(dir,['rev-parse',ref],{allowFailure:true})).stdout;
+  if(!resolved)throw new Error('action_ref_not_found');
+
+  await git(dir,['worktree','add','--detach',worktree,resolved]);
+  let status='success',exit_code=0,stdout='',stderr='',started_at=now();
+  const started=Date.now();
+  try{
+    const pkgFile=path.join(worktree,'package.json');
+    let pkg={};
+    try{pkg=JSON.parse(await fs.readFile(pkgFile,'utf8'))}catch{throw new Error('action_package_json_missing')}
+    if(!pkg.scripts?.[action])throw new Error('action_script_missing');
+    try{
+      const result=await execFileAsync(process.platform==='win32'?'npm.cmd':'npm',['run',action],{
+        cwd:worktree,
+        env:{...process.env,TGG_ACTION_ID:actionId,TGG_PROJECT_ID:id,TGG_ACTION_REF:resolved},
+        timeout:timeout_ms,
+        maxBuffer:8*1024*1024
+      });
+      stdout=String(result.stdout||'');
+      stderr=String(result.stderr||'');
+    }catch(error){
+      status='failed';
+      exit_code=Number.isInteger(error?.code)?error.code:1;
+      stdout=String(error?.stdout||'');
+      stderr=String(error?.stderr||error?.message||'');
+    }
+  }finally{
+    await git(dir,['worktree','remove','--force',worktree],{allowFailure:true});
+    await fs.rm(worktree,{recursive:true,force:true}).catch(()=>{});
+  }
+
+  const record={
+    schema:'tgg.action/v1',
+    id:actionId,
+    project_id:safeId(id),
+    action,
+    ref,
+    sha:resolved,
+    status,
+    exit_code,
+    duration_ms:Date.now()-started,
+    stdout:stdout.slice(-200000),
+    stderr:stderr.slice(-200000),
+    owner:'TGG',
+    created_at:started_at,
+    completed_at:now()
+  };
+
+  await withMetadataCommit(id,{
+    message:'TGG Action '+action+' '+status,
+    mutate:async({dir:projectRoot})=>{
+      await writeMetaItem(projectRoot,'actions',record.id,record);
+      return record;
+    }
+  });
+  return record;
+}
