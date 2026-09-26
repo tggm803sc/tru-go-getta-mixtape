@@ -11,6 +11,7 @@ const BACKEND=String(process.env.TGG_HIGGSFIELD_BACKEND_URL||'').trim().replace(
 const BACKEND_TOKEN=String(process.env.TGG_HIGGSFIELD_BACKEND_TOKEN||'').trim();
 const PROJECTS_URL=String(process.env.TGG_PROJECTS_URL||'http://127.0.0.1:10110').trim().replace(/\/$/,'');
 const PROJECTS_TOKEN=String(process.env.TGG_PROJECTS_TOKEN||'').trim();
+const PRESETS_FILE=path.resolve(process.env.TGG_HIGGSFIELD_PRESETS_FILE||path.join(process.cwd(),'tgg-higgsfield','presets.json'));
 
 await fs.mkdir(path.join(ROOT,'jobs'),{recursive:true});
 
@@ -53,6 +54,16 @@ async function persistProjectJob(job,{event='update'}={}){
     return {ok:false,project_id:projectId,error:String(error?.message||error)};
   }
 }
+async function loadPresets(){
+  try{
+    const data=JSON.parse(await fs.readFile(PRESETS_FILE,'utf8'));
+    return Array.isArray(data?.presets)?data.presets:[];
+  }catch{return []}
+}
+async function getPreset(id){
+  const presets=await loadPresets();
+  return presets.find(x=>String(x.id||'')===String(id||''))||null;
+}
 async function listJobs(){
   const names=await fs.readdir(path.join(ROOT,'jobs')).catch(()=>[]);
   const jobs=[];
@@ -67,6 +78,38 @@ async function jsonBody(req){
   if(!raw)return {};try{return JSON.parse(raw)}catch{throw new Error('invalid_json')}
 }
 function send(res,status,body){res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});res.end(JSON.stringify(body,null,2))}
+async function cancelJob(job){
+  if(['completed','failed','cancelled'].includes(job.status))return job;
+  if(BACKEND&&job.remote){
+    try{
+      await fetch(BACKEND+'/v1/jobs/'+encodeURIComponent(job.id)+'/cancel',{
+        method:'POST',
+        headers:{...(BACKEND_TOKEN?{authorization:'Bearer '+BACKEND_TOKEN}:{})},
+        signal:AbortSignal.timeout(30000)
+      });
+    }catch{}
+  }
+  job.status='cancelled';
+  job.cancelled_at=new Date().toISOString();
+  job.updated_at=job.cancelled_at;
+  await writeJob(job);
+  job.project_save=await persistProjectJob(job,{event:'cancelled'});
+  await writeJob(job);
+  return job;
+}
+async function recordResult(job,input){
+  const next=String(input.status||'completed');
+  if(!['completed','failed'].includes(next))throw new Error('invalid_result_status');
+  job.status=next;
+  job.result=input.result??null;
+  job.error=next==='failed'?String(input.error||'generation_failed'):null;
+  job.completed_at=new Date().toISOString();
+  job.updated_at=job.completed_at;
+  await writeJob(job);
+  job.project_save=await persistProjectJob(job,{event:next});
+  await writeJob(job);
+  return job;
+}
 async function dispatch(job){
   if(!BACKEND){
     job.status='queued-local';
@@ -82,8 +125,10 @@ async function dispatch(job){
     body:JSON.stringify({
       id:job.id,
       type:job.type,
+      preset_id:job.preset_id,
       prompt:job.prompt,
       input:job.input,
+      options:job.options,
       context:job.context,
       project_id:job.project_id
     }),
@@ -105,6 +150,9 @@ const server=http.createServer(async(req,res)=>{
   try{
     if(req.method==='GET'&&url.pathname==='/health')return send(res,200,{ok:true,service:'tgg-higgsfield',owner:'TGG',mode:BACKEND?'backend':'local-queue',projects_url:PROJECTS_URL,project_persistence:true,time:new Date().toISOString()});
     if(url.pathname.startsWith('/v1/')&&req.method!=='GET'&&!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+    if(req.method==='GET'&&url.pathname==='/v1/presets'){
+      return send(res,200,{ok:true,owner:'TGG',service:'tgg-higgsfield',presets:await loadPresets()});
+    }
     if(req.method==='GET'&&url.pathname==='/v1/jobs'){
       const projectId=String(url.searchParams.get('project_id')||'').trim();
       const jobs=await listJobs();
@@ -112,13 +160,19 @@ const server=http.createServer(async(req,res)=>{
     }
     if(req.method==='POST'&&url.pathname==='/v1/jobs'){
       const input=await jsonBody(req);
-      const type=String(input.type||'image').trim();
+      const presetId=String(input.preset_id||'').trim();
+      const preset=presetId?await getPreset(presetId):null;
+      if(presetId&&!preset)throw new Error('preset_not_found');
+      const type=String(input.type||preset?.type||'image').trim();
       if(!['image','video','vfx','avatar','world-shot','ad-variant'].includes(type))throw new Error('unsupported_job_type');
       const job={
         id:id(),owner:'TGG',service:'tgg-higgsfield',status:'created',
         type,project_id:String(input.project_id||'tgg-world'),
+        preset_id:preset?.id||null,
+        preset_name:preset?.name||null,
         prompt:String(input.prompt||'').slice(0,20000),
         input:input.input||null,
+        options:{...(preset?.defaults||{}),...(input.options||{})},
         context:input.context||{},
         created_at:new Date().toISOString(),updated_at:new Date().toISOString()
       };
@@ -126,9 +180,21 @@ const server=http.createServer(async(req,res)=>{
       const dispatched=await dispatch(job);
       return send(res,202,{ok:true,job:dispatched});
     }
-    const m=url.pathname.match(/^\/v1\/jobs\/([a-f0-9]{24})$/);
+    let m=url.pathname.match(/^\/v1\/jobs\/([a-f0-9]{24})$/);
     if(req.method==='GET'&&m)return send(res,200,{ok:true,job:await readJob(m[1])});
-    if(req.method==='POST'&&m&&url.pathname.endsWith('/cancel'))return send(res,404,{ok:false,error:'not_found'});
+
+    m=url.pathname.match(/^\/v1\/jobs\/([a-f0-9]{24})\/cancel$/);
+    if(req.method==='POST'&&m){
+      if(!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+      return send(res,200,{ok:true,job:await cancelJob(await readJob(m[1]))});
+    }
+
+    m=url.pathname.match(/^\/v1\/jobs\/([a-f0-9]{24})\/result$/);
+    if(req.method==='POST'&&m){
+      if(!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+      const input=await jsonBody(req);
+      return send(res,200,{ok:true,job:await recordResult(await readJob(m[1]),input)});
+    }
     return send(res,404,{ok:false,error:'not_found'});
   }catch(error){
     const message=String(error?.message||error);
