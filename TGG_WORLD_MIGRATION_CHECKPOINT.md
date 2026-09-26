@@ -1,27 +1,29 @@
 # TGG World Migration Checkpoint
 
-Current live READY build:
-- Project: tgg-world-play
-- Vercel project ID: prj_U2qDy9qZ5EZAKuHTEaA03BMmmplX
-- Branch/ref: tgg-world-mega-1000x
-- READY deployment: dpl_4x84ZugYUozB1rUeej9ZfWXVowQG
+Current live READY floor before migration:
+- Deployment: dpl_4x84ZugYUozB1rUeej9ZfWXVowQG
 - READY URL: tgg-world-play-3o2zeoirv-olandusgood-8594.vercel.app
 - READY commit: 111a0f4f50439096f34cd2462ee5ad9791267e38
-- READY message: chore(tgg): ship district-transition overlay v89
-- Previous source owner recorded by deployment metadata: olandusgood-byte/tru-go-getta-mixtape
+- READY overlay: v89
 
-Migration rule:
-Do not replace the live READY v89 build with incomplete mirror source.
-Import the active v89 source into this branch before continuing v90+ world updates.
-
-Current new repository:
+Migration repository:
 - tggm803sc/tru-go-getta-mixtape
-- Branch prepared: tgg-world-mega-1000x
+- Branch: tgg-world-mega-1000x
 
-Next intended batch after source import:
-- v90 whole-world grounding
-- curb/median structure
-- storefront glass depth
-- terrain props
-- traffic variety
+Migration status:
+- exact live v89 master JS imported from protected READY deployment
+- exact live v89 master CSS imported
+- exact live v89 cleaner JS/CSS imported
+- v90 whole-world grounding applied on migrated source
+- v90 proxy contract recreated
+- v90 smoke contract recreated
+
+v90 adds:
+- 144 curb/median instances
+- 72 storefront glass-depth instances
+- 132 terrain-prop instances
+- five-class traffic variety metadata
 - avatar/vehicle contact lighting
+- weather/time-aware contact-shadow tuning
+
+Do not replace live READY v89 until the new repository is connected to deployment and v90 smoke passes.
