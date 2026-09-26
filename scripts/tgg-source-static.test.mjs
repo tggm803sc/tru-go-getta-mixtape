@@ -17,14 +17,14 @@ const pkg=JSON.parse(pkgText);
 
 assert.equal((catalog.projects||[]).some(x=>x.id==='tgg-source'&&x.kind==='source-control'),true);
 
-for(const fn of ['searchProject','getProjectActivity','createProjectBundle']){
+for(const fn of ['searchProject','getProjectActivity','createProjectBundle','listActions','runProjectAction']){
   assert.match(store,new RegExp('export async function '+fn));
 }
-for(const route of ['/activity','/search','/export']){
+for(const route of ['/activity','/search','/export','/actions']){
   assert.ok(server.includes(route),route+' API missing');
 }
 
-for(const label of ['TGG Source','Activity','Code','Issues','Pull Requests','Releases','TGG Higgsfield','Export Bundle']){
+for(const label of ['TGG Source','Activity','Code','Issues','Pull Requests','Releases','TGG Actions','TGG Higgsfield','Export Bundle']){
   assert.ok(dashboard.includes(label),'dashboard missing '+label);
 }
 assert.match(dashboard,/submitHiggsfield/);
@@ -36,6 +36,9 @@ assert.match(snapshot,/source-snapshot\.json/);
 assert.match(snapshot,/sha256/);
 assert.match(snapshot,/secretNames/);
 assert.match(snapshot,/ignoredDirs/);
+assert.match(store,/worktree.*add/s);
+assert.match(store,/action_not_allowed/);
+assert.match(dashboard,/runAction/);
 
 assert.equal(
   pkg.scripts?.['tgg:projects:save-all'],
@@ -53,6 +56,7 @@ console.log(JSON.stringify({
   pull_requests:true,
   releases:true,
   bundle_export:true,
+  actions:true,
   higgsfield_every_project:true,
   save_all:true
 },null,2));
