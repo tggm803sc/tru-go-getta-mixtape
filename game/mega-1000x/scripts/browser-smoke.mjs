@@ -43,14 +43,29 @@ const contract=await page.evaluate(()=>{
     wholeGameMilestone:r.dataset.tggWholeGameMilestoneReadyV200||null,
     wholeGameMilestoneMissing:r.dataset.tggWholeGameMilestoneMissingV200||null,
     longHaulAuthority:r.dataset.tggLongHaulTravelAuthorityV208||null,
-    wholeWorldPreserved:r.dataset.tggWholeWorldPreservedV208||null
+    wholeWorldPreserved:r.dataset.tggWholeWorldPreservedV208||null,
+    playableRendererV209:r.dataset.tggPlayableRendererV209||null,
+    rendererAuthorityV209:r.dataset.tggRendererAuthorityV209||null,
+    rendererTelemetryV209:r.dataset.tggRendererTelemetryV209||null,
+    rendererOptimizationV209:r.dataset.tggRendererOptimizationV209||null,
+    playableTargetFpsV209:r.dataset.tggPlayableTargetFpsV209||null,
+    playableFloorFpsV209:r.dataset.tggPlayableFloorFpsV209||null,
+    rendererModeV209:r.dataset.tggRendererModeV209||null,
+    rendererPixelRatioV209:r.dataset.tggRendererPixelRatioV209||null,
+    drawCallsV209:r.dataset.tggDrawCallsV209||null,
+    trianglesV209:r.dataset.tggTrianglesV209||null,
+    geometriesV209:r.dataset.tggGeometriesV209||null,
+    texturesV209:r.dataset.tggTexturesV209||null,
+    staticMeshesFrozenV209:r.dataset.tggStaticMeshesFrozenV209||null,
+    shadowCastersPrunedV209:r.dataset.tggShadowCastersPrunedV209||null,
+    playableFarPlaneV209:r.dataset.tggPlayableFarPlaneV209||null
   };
 });
 
-if(contract.overlay!=='1000x-v208') throw new Error('overlay v208 mismatch');
+if(contract.overlay!=='1000x-v209') throw new Error('overlay v209 mismatch');
 if(contract.graphics!=='57') throw new Error('graphics manifest mismatch');
 if(contract.integrity!=='pass') throw new Error('build integrity failed');
-if(contract.buildMaster!=='1000x-v208') throw new Error('master asset mismatch');
+if(contract.buildMaster!=='1000x-v209') throw new Error('master asset mismatch');
 if(contract.buildCleaner!=='193') throw new Error('cleaner asset mismatch');
 if(contract.finalVerification!=='pass') throw new Error('whole-world final verification failed: '+contract.finalVerificationMissing);
 if(contract.productionHandoffReady!=='1') throw new Error('production handoff not ready');
@@ -59,10 +74,15 @@ if(contract.sourceDeploymentGap!=='closed') throw new Error('source/deployment g
 if(contract.releaseBridge!=='pass') throw new Error('release bridge failed');
 if(contract.releaseAcceptance!=='pass') throw new Error('release acceptance failed: '+contract.releaseAcceptanceMissing);
 if(contract.longHaulAuthority!=='1'||contract.wholeWorldPreserved!=='1') throw new Error('v208 whole-world authority missing');
+if(contract.playableRendererV209!=='1') throw new Error('v209 playable renderer missing');
+if(contract.rendererAuthorityV209!=='playability-first') throw new Error('v209 renderer authority mismatch');
+if(contract.rendererTelemetryV209!=='drawcalls+triangles+memory') throw new Error('v209 renderer telemetry missing');
+if(contract.rendererOptimizationV209!=='static-freeze+shadow-prune+frustum+adaptive-dpr') throw new Error('v209 renderer optimization mismatch');
+if(contract.playableTargetFpsV209!=='60'||contract.playableFloorFpsV209!=='45') throw new Error('v209 playable FPS targets mismatch');
 if(consoleErrors.length) throw new Error('browser console errors: '+consoleErrors.slice(0,5).join(' | '));
 
 if(screenshotPath||headful){
-  const output=screenshotPath||'tgg-v208-browser-proof.png';
+  const output=screenshotPath||'tgg-v209-browser-proof.png';
   await page.screenshot({path:output,fullPage:true});
   console.log('TGG_PROOF_SCREENSHOT='+output);
 }
