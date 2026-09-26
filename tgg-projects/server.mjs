@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
+import {createReadStream} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawn} from 'node:child_process';
@@ -233,7 +234,32 @@ const server=http.createServer(async(req,res)=>{
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/export$/);
     if(method==='POST'&&m){
       const input=await body(req);
-      return send(res,201,{ok:true,export:await createProjectBundle(dec(m[1]),{ref:input.ref||'--all'})});
+      const projectId=dec(m[1]);
+      const exported=await createProjectBundle(projectId,{ref:input.ref||'--all'});
+      const bundle=path.basename(exported.file);
+      const publicExport={...exported,bundle,download_url:'/v1/projects/'+encodeURIComponent(projectId)+'/export/'+encodeURIComponent(bundle)};
+      delete publicExport.file;
+      return send(res,201,{ok:true,export:publicExport});
+    }
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/export\/([^/]+\.bundle)$/);
+    if(method==='GET'&&m){
+      if(TOKEN&&!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+      const projectId=dec(m[1]);
+      const bundle=dec(m[2]);
+      if(!bundle.startsWith(projectId+'-')||path.basename(bundle)!==bundle)throw new Error('invalid_export_bundle');
+      const exportRoot=path.resolve(process.env.TGG_PROJECTS_EXPORT_ROOT||'/data/tgg-project-exports');
+      const file=path.join(exportRoot,bundle);
+      const stat=await fs.stat(file).catch(()=>null);
+      if(!stat?.isFile())throw new Error('export_not_found');
+      res.writeHead(200,{
+        'content-type':'application/octet-stream',
+        'content-length':String(stat.size),
+        'content-disposition':'attachment; filename="'+bundle.replace(/"/g,'')+'"',
+        'cache-control':'no-store'
+      });
+      createReadStream(file).pipe(res);
+      return;
     }
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/issues$/);
