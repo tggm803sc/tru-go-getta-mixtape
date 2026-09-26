@@ -2,44 +2,59 @@
   "mode": "release-freeze",
   "canonicalRepository": "tggm803sc/tru-go-getta-mixtape",
   "branch": "tgg-world-mega-1000x",
+  "vercel": {
+    "orgId": "team_TeV8b8Rv4jnchCzdYOOIehl2",
+    "projectId": "prj_U2qDy9qZ5EZAKuHTEaA03BMmmplX"
+  },
   "source": {
     "master": "1000x-v208",
     "cleaner": "193",
     "graphicsManifest": "57"
   },
   "policy": "No new feature or graphics-version work until release gates pass.",
+  "verified": {
+    "canonicalRepo": "pass",
+    "vercelProjectFile": "pass",
+    "sourceProxySync": "pass",
+    "runtimeErrorsLastHour": "pass",
+    "masterReleaseSystems": "present"
+  },
   "gates": {
-    "sourceHandoff": {
-      "status": "fixed",
-      "detail": "Proxy synchronized to master v208 / cleaner 193."
-    },
-    "deploymentReady": {
-      "status": "pending",
-      "detail": "Exact synchronized commit must reach READY."
+    "exactDeployment": {
+      "status": "review",
+      "detail": "Vercel has a READY deployment aligned to V208/cleaner 193 by metadata, but the new canonical repo handoff has not been proven by live browser acceptance."
     },
     "publicBrowserAcceptance": {
-      "status": "pending",
-      "detail": "Run v208 release smoke on fresh READY URL."
+      "status": "blocked",
+      "detail": "Requires real-browser run of the V208 release smoke. TinyFish browser test is blocked by insufficient wallet credit."
     },
     "studioRoute": {
-      "status": "pending",
-      "detail": "Prove same-origin Studio/Game Editing route opens from current build."
+      "status": "blocked",
+      "detail": "Studio/video-studio source is absent from the canonical migration repo. Re-import/integrate Studio source or prove an external same-origin route source."
     },
     "saveProgression": {
-      "status": "pending",
-      "detail": "Prove persistence after reload with no duplicate payout/progression."
+      "status": "pending-proof",
+      "detail": "Persistent payout/progression authorities exist in code; live reload/no-duplicate proof still required."
     },
     "signedInCollaboration": {
-      "status": "pending",
-      "detail": "Prove signed-in and two-user/collaboration flow if enabled for release."
+      "status": "pending-proof",
+      "detail": "Signed-in and two-user/collaboration acceptance has not been proven on the migrated release candidate."
     },
     "performance": {
-      "status": "pending",
-      "detail": "Verify browser console clean and acceptable adaptive FPS/scene budget on representative devices."
+      "status": "partial",
+      "detail": "No Vercel runtime errors in the last hour; real-browser console/FPS/device acceptance still required."
     },
     "finalProductionHandoff": {
       "status": "pending",
-      "detail": "Promote only after all required gates pass."
+      "detail": "Promote only after required gates pass."
     }
-  }
+  },
+  "nextActions": [
+    "Prove exact V208/193 build in a real browser and run release acceptance smoke.",
+    "Restore/integrate the Studio source into the canonical release path and prove /video-studio/.",
+    "Run save/reload payout and progression persistence proof.",
+    "Run signed-in and two-user/collaboration proof if collaboration is in launch scope.",
+    "Run adaptive performance/browser-console acceptance.",
+    "Promote the exact accepted SHA as final production."
+  ]
 }
