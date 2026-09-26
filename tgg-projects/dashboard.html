@@ -3,43 +3,83 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TGG Projects</title>
+<title>TGG Source</title>
 <style>
-:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui;background:#090b10;color:#f6f7fb}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172033,#090b10 48%);min-height:100vh}
-header{padding:28px 34px;border-bottom:1px solid #283044;background:#0c111bcc;backdrop-filter:blur(16px);position:sticky;top:0}
-h1{margin:0;font-size:25px;letter-spacing:.04em}.tag{color:#99a6c4;font-size:13px;margin-top:6px}
-main{max-width:1200px;margin:auto;padding:28px;display:grid;grid-template-columns:300px 1fr;gap:22px}
-.card{background:#101622;border:1px solid #273149;border-radius:18px;box-shadow:0 16px 50px #0005;overflow:hidden}
-.section{padding:18px}.title{font-weight:800}.muted{color:#8f9bb5;font-size:13px}
-button,input,textarea{font:inherit}.project{padding:14px;border-bottom:1px solid #202a3c;cursor:pointer}.project:hover,.project.active{background:#172238}
-button{border:1px solid #33425f;background:#18243a;color:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
-button:hover{background:#223252}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-pre{white-space:pre-wrap;word-break:break-word;background:#0b1019;padding:14px;border-radius:12px;border:1px solid #202a3c;max-height:440px;overflow:auto}
-table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #202a3c;text-align:left;font-size:13px}
-input{background:#0b1019;border:1px solid #33425f;color:#fff;padding:9px 10px;border-radius:10px}
-@media(max-width:800px){main{grid-template-columns:1fr;padding:14px}header{padding:20px}}
+:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui;background:#07090d;color:#f5f7fb;--line:#283149;--panel:#101722;--panel2:#0b111a;--muted:#8f9bb5;--blue:#3b82f6;--green:#31c48d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 30% -20%,#1d2b49 0,#0a0e15 38%,#07090d 72%);min-height:100vh}
+header{height:64px;padding:0 22px;border-bottom:1px solid var(--line);background:#0a0f17ee;backdrop-filter:blur(18px);position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px}
+.brand{font-size:21px;font-weight:900;letter-spacing:.03em}.brand span{color:#72a7ff}.sub{color:var(--muted);font-size:12px}
+main{display:grid;grid-template-columns:285px minmax(0,1fr);max-width:1500px;margin:auto;min-height:calc(100vh - 64px)}
+aside{border-right:1px solid var(--line);padding:18px 12px;background:#0a0f17aa}.sidebar-title{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:8px 10px}
+.project{padding:11px 12px;border-radius:10px;cursor:pointer;margin:2px 0}.project:hover,.project.active{background:#17243a}.project b{display:block;font-size:14px}.project .muted{margin-top:3px}
+.content{padding:24px;min-width:0}.repo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.title{font-weight:850}.repo-name{font-size:24px}.muted{color:var(--muted);font-size:13px}.pill{border:1px solid #33425f;border-radius:999px;padding:4px 9px;color:#b9c7df;font-size:12px}
+.toolbar,.tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tabs{margin-top:20px;border-bottom:1px solid var(--line);padding-bottom:9px}.tabs button{background:transparent;border-color:transparent}.tabs button:hover,.tabs button.active{background:#18243a;border-color:#33425f}
+button,input,textarea,select{font:inherit;color:#fff}button{border:1px solid #33425f;background:#162238;border-radius:9px;padding:8px 11px;cursor:pointer}button:hover{background:#223452}
+input,textarea,select{background:var(--panel2);border:1px solid #33425f;border-radius:9px;padding:9px 10px}textarea{width:100%;min-height:100px;resize:vertical}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-top:16px;overflow:hidden}.card-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}.card-body{padding:15px}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid #202a3c;text-align:left;font-size:13px;vertical-align:top}th{color:#9fb0cc;font-size:12px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}pre{white-space:pre-wrap;word-break:break-word;background:#090e16;padding:14px;border:1px solid #202a3c;border-radius:10px;max-height:620px;overflow:auto}
+.list-row{padding:12px 14px;border-bottom:1px solid #202a3c;cursor:pointer}.list-row:last-child{border-bottom:0}.list-row:hover{background:#151e2c}
+.searchbar{display:flex;gap:8px;margin-top:16px}.searchbar input{flex:1}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.stat{padding:15px;border:1px solid var(--line);border-radius:12px;background:#0d141f}.stat b{font-size:20px;display:block}
+.ok{color:#75dfb8}.warn{color:#ffcc73}.error{color:#ff8585}.hidden{display:none!important}
+@media(max-width:900px){main{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line)}.grid{grid-template-columns:1fr}.content{padding:15px}}
 </style>
 </head>
 <body>
-<header><h1>TGG Projects</h1><div class="tag">TGG-owned source control · projects · branches · commits · files</div></header>
+<header>
+  <div><div class="brand">TGG <span>Source</span></div><div class="sub">TGG-owned repositories · projects · creator AI</div></div>
+  <div style="margin-left:auto" class="toolbar"><span class="pill" id="authState">local</span><button onclick="setToken()">Access Token</button><button onclick="newProject()">New Project</button><button onclick="importProject()">Import Repo</button></div>
+</header>
 <main>
-  <aside class="card"><div class="section"><div class="title">Projects</div><div class="muted">Stored on TGG infrastructure</div></div><div id="projects"></div></aside>
-  <section class="card"><div class="section">
-    <div class="toolbar"><div><div class="title" id="name">Select a project</div><div class="muted" id="meta">No project loaded</div></div></div>
-    <div class="toolbar" style="margin-top:16px"><button onclick="loadTab('commits')">Commits</button><button onclick="loadTab('branches')">Branches</button><button onclick="loadTab('files')">Files</button><button onclick="loadTab('status')">Status</button><button id="higgsfieldTab" onclick="loadHiggsfield()" style="display:none">Higgsfields</button></div>
-    <div id="view" style="margin-top:16px"></div>
-  </div></section>
+<aside><div class="sidebar-title">TGG Projects</div><div id="projects"></div></aside>
+<section class="content">
+  <div class="repo-head"><div><div class="repo-name title" id="name">Select a project</div><div class="muted" id="meta">TGG Source is ready.</div></div><div class="toolbar"><button id="exportBtn" onclick="exportProject()" disabled>Export Bundle</button></div></div>
+  <div class="tabs" id="tabs">
+    <button data-tab="activity" onclick="loadTab('activity')">Activity</button>
+    <button data-tab="files" onclick="loadTab('files')">Code</button>
+    <button data-tab="commits" onclick="loadTab('commits')">Commits</button>
+    <button data-tab="branches" onclick="loadTab('branches')">Branches</button>
+    <button data-tab="issues" onclick="loadTab('issues')">Issues</button>
+    <button data-tab="pulls" onclick="loadTab('pulls')">Pull Requests</button>
+    <button data-tab="releases" onclick="loadTab('releases')">Releases</button>
+    <button data-tab="higgsfield" onclick="loadHiggsfield()">TGG Higgsfield</button>
+    <button data-tab="status" onclick="loadTab('status')">Status</button>
+  </div>
+  <div class="searchbar"><input id="searchInput" placeholder="Search this TGG project: files, code, commits"><button onclick="searchProject()">Search</button></div>
+  <div id="view"><div class="card"><div class="card-body muted">Choose a TGG project from the left.</div></div></div>
+</section>
 </main>
 <script>
 let current=null;
+let token=sessionStorage.getItem('tgg_projects_token')||'';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-async function api(url,options){const r=await fetch(url,options);const j=await r.json();if(!r.ok)throw Error(j.error||r.status);return j}
-async function boot(){const j=await api('/v1/projects');const box=document.querySelector('#projects');box.innerHTML=j.projects.map(p=>'<div class="project" data-id="'+esc(p.id)+'"><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.current_branch)+' · '+esc((p.head||'').slice(0,10))+'</div></div>').join('')||'<div class="section muted">No TGG projects yet.</div>';box.querySelectorAll('.project').forEach(el=>el.onclick=()=>select(el.dataset.id));}
-async function select(id){current=id;document.querySelectorAll('.project').forEach(x=>x.classList.toggle('active',x.dataset.id===id));const j=await api('/v1/projects/'+encodeURIComponent(id));document.querySelector('#name').textContent=j.project.name;document.querySelector('#meta').textContent=j.project.id+' · '+j.project.current_branch+' · '+(j.project.head||'no commits');document.querySelector('#higgsfieldTab').style.display=id==='tgg-higgsfield'?'inline-block':'none';if(id==='tgg-higgsfield')loadHiggsfield();else loadTab('commits');}
-async function loadTab(tab){if(!current)return;const view=document.querySelector('#view');view.innerHTML='<div class="muted">Loading…</div>';if(tab==='commits'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/commits');view.innerHTML='<table><tr><th>Commit</th><th>Message</th><th>Author</th><th>Date</th></tr>'+j.commits.map(x=>'<tr><td><code>'+esc(x.sha.slice(0,10))+'</code></td><td>'+esc(x.subject)+'</td><td>'+esc(x.author)+'</td><td>'+esc(x.date)+'</td></tr>').join('')+'</table>'}else if(tab==='branches'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/branches');view.innerHTML='<table><tr><th>Branch</th><th>Commit</th></tr>'+j.branches.map(x=>'<tr><td>'+esc(x.current?'● '+x.name:x.name)+'</td><td><code>'+esc(x.sha.slice(0,12))+'</code></td></tr>').join('')+'</table>'}else if(tab==='files'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/files');view.innerHTML=j.files.map(x=>'<div class="project" onclick="openFile(\''+String(x).replace(/'/g,"\\'")+'\')">'+esc(x)+'</div>').join('')}else{const j=await api('/v1/projects/'+encodeURIComponent(current)+'/status');view.innerHTML='<pre>'+esc(j.status.raw)+'</pre>'}}
-async function loadHiggsfield(){if(!current)return;const view=document.querySelector('#view');view.innerHTML='<div class="muted">Loading TGG Higgsfields…</div>';try{const [presets,jobs]=await Promise.all([api('/v1/higgsfield/presets'),api('/v1/higgsfield/jobs?project_id='+encodeURIComponent(current))]);const presetHtml=(presets.presets||[]).map(p=>'<div class="project"><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.id)+' · '+esc(p.type)+'</div><div class="muted">'+esc(p.description||'')+'</div></div>').join('');const jobHtml=(jobs.jobs||[]).slice(0,30).map(j=>'<tr><td><code>'+esc(j.id.slice(0,10))+'</code></td><td>'+esc(j.preset_name||j.type)+'</td><td>'+esc(j.status)+'</td><td>'+esc(j.updated_at||j.created_at||'')+'</td></tr>').join('');view.innerHTML='<div class="title">TGG Higgsfields</div><div class="muted">TGG-owned creator generation presets and project-saved job history.</div><div style="margin-top:18px"><div class="title">Presets</div>'+presetHtml+'</div><div style="margin-top:18px"><div class="title">Recent Jobs</div><table><tr><th>Job</th><th>Preset / Type</th><th>Status</th><th>Updated</th></tr>'+jobHtml+'</table></div>'}catch(e){view.innerHTML='<div class="muted">TGG Higgsfields unavailable: '+esc(e.message)+'</div>'}}
-async function openFile(file){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/file/'+file.split('/').map(encodeURIComponent).join('/'));document.querySelector('#view').innerHTML='<div class="title">'+esc(file)+'</div><pre>'+esc(j.content)+'</pre>'}
-boot().catch(e=>document.querySelector('#projects').innerHTML='<div class="section">'+esc(e.message)+'</div>');
+const encPath=p=>String(p).split('/').map(encodeURIComponent).join('/');
+function headers(extra={}){return {...extra,...(token?{authorization:'Bearer '+token}:{})}}
+async function api(url,options={}){const opts={...options,headers:headers(options.headers||{})};const r=await fetch(url,opts);const text=await r.text();let j={};try{j=text?JSON.parse(text):{}}catch{throw Error('Invalid TGG response')};if(!r.ok)throw Error(j.error||r.status);return j}
+function setToken(){const next=prompt('TGG Projects access token (leave blank for local/no-token mode):',token);if(next===null)return;token=next.trim();if(token)sessionStorage.setItem('tgg_projects_token',token);else sessionStorage.removeItem('tgg_projects_token');document.querySelector('#authState').textContent=token?'authenticated':'local'}
+function tab(name){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===name))}
+async function boot(){document.querySelector('#authState').textContent=token?'authenticated':'local';const j=await api('/v1/projects');const box=document.querySelector('#projects');box.innerHTML=j.projects.map(p=>'<div class="project" data-id="'+esc(p.id)+'"><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.current_branch)+' · '+esc((p.head||'').slice(0,10))+'</div></div>').join('')||'<div class="muted" style="padding:10px">No TGG projects yet.</div>';box.querySelectorAll('.project').forEach(el=>el.onclick=()=>select(el.dataset.id))}
+async function select(id){current=id;document.querySelector('#exportBtn').disabled=false;document.querySelectorAll('.project').forEach(x=>x.classList.toggle('active',x.dataset.id===id));const j=await api('/v1/projects/'+encodeURIComponent(id));document.querySelector('#name').textContent=j.project.name;document.querySelector('#meta').textContent=j.project.id+' · '+j.project.current_branch+' · '+(j.project.head||'no commits')+(j.project.dirty?' · modified':'');loadTab('activity')}
+async function newProject(){const id=prompt('Project ID (letters/numbers/dash):');if(!id)return;const name=prompt('Project name:',id)||id;await api('/v1/projects',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id,name,default_branch:'main'})});await boot();await select(id)}
+async function importProject(){const id=prompt('TGG project ID:');if(!id)return;const remote_url=prompt('Git repository URL to import:');if(!remote_url)return;await api('/v1/import',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id,remote_url,name:id})});await boot();await select(id)}
+async function exportProject(){if(!current)return;const j=await api('/v1/projects/'+encodeURIComponent(current)+'/export',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});document.querySelector('#view').innerHTML='<div class="card"><div class="card-head"><b>TGG Project Bundle</b><span class="ok">Saved</span></div><div class="card-body"><div><b>'+esc(j.export.file)+'</b></div><div class="muted">'+esc(j.export.bytes)+' bytes · SHA-256 '+esc(j.export.sha256)+'</div></div></div>'}
+async function searchProject(){if(!current)return;const q=document.querySelector('#searchInput').value.trim();if(!q)return;tab('');const j=await api('/v1/projects/'+encodeURIComponent(current)+'/search?q='+encodeURIComponent(q));const rows=[...(j.file_matches||[]).map(x=>({kind:'file',label:x})),...(j.content_matches||[]).map(x=>({kind:'code',label:x.file+':'+x.line,text:x.text})),...(j.commit_matches||[]).map(x=>({kind:'commit',label:x.sha.slice(0,10)+' '+x.subject,text:x.author}))];document.querySelector('#view').innerHTML='<div class="card"><div class="card-head"><b>Search: '+esc(q)+'</b><span class="muted">'+rows.length+' results</span></div>'+rows.map(r=>'<div class="list-row"><b>'+esc(r.kind)+'</b> · '+esc(r.label)+(r.text?'<div class="muted">'+esc(r.text)+'</div>':'')+'</div>').join('')+'</div>'}
+async function loadTab(name){if(!current)return;tab(name);const view=document.querySelector('#view');view.innerHTML='<div class="card"><div class="card-body muted">Loading…</div></div>';
+ if(name==='activity'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/activity');view.innerHTML='<div class="card"><div class="card-head"><b>Activity</b><span class="muted">'+j.activity.length+' events</span></div>'+j.activity.map(x=>'<div class="list-row"><b>'+esc(x.type)+'</b> · '+esc(x.title||x.id)+'<div class="muted">'+esc(x.date||'')+(x.state?' · '+esc(x.state):'')+'</div></div>').join('')+'</div>'}
+ else if(name==='commits'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/commits');view.innerHTML='<div class="card"><table><tr><th>Commit</th><th>Message</th><th>Author</th><th>Date</th></tr>'+j.commits.map(x=>'<tr><td><code>'+esc(x.sha.slice(0,10))+'</code></td><td>'+esc(x.subject)+'</td><td>'+esc(x.author)+'</td><td>'+esc(x.date)+'</td></tr>').join('')+'</table></div>'}
+ else if(name==='branches'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/branches');view.innerHTML='<div class="card"><table><tr><th>Branch</th><th>Commit</th></tr>'+j.branches.map(x=>'<tr><td>'+esc(x.current?'● '+x.name:x.name)+'</td><td><code>'+esc(x.sha.slice(0,12))+'</code></td></tr>').join('')+'</table></div>'}
+ else if(name==='files'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/files');view.innerHTML='<div class="card"><div class="card-head"><b>Code</b><span class="muted">'+j.files.length+' files</span></div>'+j.files.map(x=>'<div class="list-row" onclick="openFile(\''+String(x).replace(/'/g,"\\'")+'\')">'+esc(x)+'</div>').join('')+'</div>'}
+ else if(name==='issues'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/issues');view.innerHTML='<div class="card"><div class="card-head"><b>Issues</b><button onclick="newIssue()">New Issue</button></div>'+j.issues.map(x=>'<div class="list-row"><b>#'+esc(x.number)+' '+esc(x.title)+'</b><div class="muted">'+esc(x.state)+' · '+esc(x.updated_at||x.created_at)+'</div></div>').join('')+'</div>'}
+ else if(name==='pulls'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/pull-requests');view.innerHTML='<div class="card"><div class="card-head"><b>Pull Requests</b><span class="muted">'+j.pull_requests.length+'</span></div>'+j.pull_requests.map(x=>'<div class="list-row"><b>#'+esc(x.number)+' '+esc(x.title)+'</b><div class="muted">'+esc(x.state)+' · '+esc(x.head)+' → '+esc(x.base)+'</div></div>').join('')+'</div>'}
+ else if(name==='releases'){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/releases');view.innerHTML='<div class="card"><div class="card-head"><b>Releases</b><span class="muted">'+j.releases.length+'</span></div>'+j.releases.map(x=>'<div class="list-row"><b>'+esc(x.tag)+' · '+esc(x.title)+'</b><div class="muted">'+esc(x.created_at)+'</div><div>'+esc(x.notes||'')+'</div></div>').join('')+'</div>'}
+ else if(name==='higgsfield'){return loadHiggsfield()}
+ else{const j=await api('/v1/projects/'+encodeURIComponent(current)+'/status');view.innerHTML='<div class="card"><div class="card-head"><b>Repository Status</b></div><div class="card-body"><pre>'+esc(j.status.raw)+'</pre></div></div>'}}
+async function newIssue(){if(!current)return;const title=prompt('Issue title:');if(!title)return;const body=prompt('Issue details:','')||'';await api('/v1/projects/'+encodeURIComponent(current)+'/issues',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title,body})});loadTab('issues')}
+async function openFile(file){const j=await api('/v1/projects/'+encodeURIComponent(current)+'/file/'+encPath(file));document.querySelector('#view').innerHTML='<div class="card"><div class="card-head"><b>'+esc(file)+'</b></div><div class="card-body"><pre>'+esc(j.content)+'</pre></div></div>'}
+async function loadHiggsfield(){if(!current)return;tab('higgsfield');const view=document.querySelector('#view');view.innerHTML='<div class="card"><div class="card-body muted">Loading TGG Higgsfield…</div></div>';try{const [presets,jobs]=await Promise.all([api('/v1/higgsfield/presets'),api('/v1/higgsfield/jobs?project_id='+encodeURIComponent(current))]);const options=(presets.presets||[]).map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+' · '+esc(p.type)+'</option>').join('');const jobRows=(jobs.jobs||[]).slice(0,40).map(j=>'<tr><td><code>'+esc(j.id.slice(0,10))+'</code></td><td>'+esc(j.preset_name||j.type)+'</td><td>'+esc(j.status)+'</td><td>'+esc(j.updated_at||j.created_at||'')+'</td></tr>').join('');view.innerHTML='<div class="grid"><div class="card"><div class="card-head"><b>Create with TGG Higgsfield</b><span class="pill">'+esc(current)+'</span></div><div class="card-body"><select id="hfPreset" style="width:100%">'+options+'</select><textarea id="hfPrompt" placeholder="Describe the shot, trailer, avatar, VFX, world scene, or ad…" style="margin-top:10px"></textarea><button style="margin-top:10px" onclick="submitHiggsfield()">Generate</button></div></div><div class="card"><div class="card-head"><b>Capabilities</b></div><div class="card-body"><div class="muted">Image · Video · VFX · Avatar · World shots · Game trailers · Ad variants</div><p>Every job is saved back into this project under <code>.tgg/higgsfield/jobs/</code>.</p></div></div></div><div class="card"><div class="card-head"><b>Generation History</b></div><table><tr><th>Job</th><th>Preset / Type</th><th>Status</th><th>Updated</th></tr>'+jobRows+'</table></div>'}catch(e){view.innerHTML='<div class="card"><div class="card-body error">'+esc(e.message)+'</div></div>'}}
+async function submitHiggsfield(){const preset_id=document.querySelector('#hfPreset').value;const prompt=document.querySelector('#hfPrompt').value.trim();if(!prompt)return alert('Add a prompt first.');const j=await api('/v1/higgsfield/jobs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({project_id:current,preset_id,prompt,context:{source:'tgg-source',project_id:current}})});alert('TGG Higgsfield job '+j.job.id+' · '+j.job.status);loadHiggsfield()}
+document.querySelector('#searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchProject()});
+boot().catch(e=>document.querySelector('#projects').innerHTML='<div class="error" style="padding:10px">'+esc(e.message)+'</div>');
 </script>
 </body></html>
