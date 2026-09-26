@@ -127,3 +127,32 @@ export async function getStatus(id){
   const r=await git(dir,['status','--porcelain=v1','--branch']);
   return {raw:r.stdout,lines:r.stdout?r.stdout.split('\n'):[]};
 }
+
+
+export async function importGitProject({id,remote_url,name='',description='',default_branch='main'}){
+  await ensureRoot();
+  id=safeId(id);
+  const remote=String(remote_url||'').trim();
+  if(!/^(https?:\/\/|ssh:\/\/|git@|file:\/\/)/i.test(remote))throw new Error('invalid_remote_url');
+  const dir=projectDir(id);
+  if(await projectExists(id))throw new Error('project_exists');
+  await git(ROOT,['clone','--no-hardlinks',remote,id]);
+  await git(dir,['config','user.name',process.env.TGG_GIT_USER_NAME||'TGG']);
+  await git(dir,['config','user.email',process.env.TGG_GIT_USER_EMAIL||'tgg@local']);
+  const current=(await git(dir,['branch','--show-current'],{allowFailure:true})).stdout||default_branch;
+  const meta={
+    schema:'tgg.project/v1',
+    id,
+    name:String(name||id),
+    description:String(description||'Imported into TGG Projects'),
+    default_branch:current||default_branch,
+    owner:'TGG',
+    imported_from:remote,
+    imported_at:new Date().toISOString()
+  };
+  await fs.writeFile(path.join(dir,'tgg-project.json'),JSON.stringify(meta,null,2)+'\n',{mode:0o600});
+  await git(dir,['add','tgg-project.json']);
+  const diff=await git(dir,['diff','--cached','--quiet'],{allowFailure:true});
+  if(!diff.ok)await git(dir,['commit','-m','TGG Projects import metadata']);
+  return getProject(id);
+}
