@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {
-  ROOT,ensureRoot,listProjects,getProject,createProject,listBranches,createBranch,
+  ROOT,ensureRoot,listProjects,getProject,createProject,importGitProject,listBranches,createBranch,
   listCommits,listFiles,readFileAtRef,writeFileAndCommit,getStatus
 } from './store.mjs';
 
@@ -58,6 +58,10 @@ const server=http.createServer(async(req,res)=>{
     if(method==='POST'&&url.pathname==='/v1/projects'){
       const input=await body(req);
       return send(res,201,{ok:true,project:await createProject(input)});
+    }
+    if(method==='POST'&&url.pathname==='/v1/import'){
+      const input=await body(req);
+      return send(res,201,{ok:true,project:await importGitProject(input)});
     }
 
     let m=url.pathname.match(/^\/v1\/projects\/([^/]+)$/);
