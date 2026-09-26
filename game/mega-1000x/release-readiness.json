@@ -1,0 +1,45 @@
+{
+  "mode": "release-freeze",
+  "canonicalRepository": "tggm803sc/tru-go-getta-mixtape",
+  "branch": "tgg-world-mega-1000x",
+  "source": {
+    "master": "1000x-v208",
+    "cleaner": "193",
+    "graphicsManifest": "57"
+  },
+  "policy": "No new feature or graphics-version work until release gates pass.",
+  "gates": {
+    "sourceHandoff": {
+      "status": "fixed",
+      "detail": "Proxy synchronized to master v208 / cleaner 193."
+    },
+    "deploymentReady": {
+      "status": "pending",
+      "detail": "Exact synchronized commit must reach READY."
+    },
+    "publicBrowserAcceptance": {
+      "status": "pending",
+      "detail": "Run v208 release smoke on fresh READY URL."
+    },
+    "studioRoute": {
+      "status": "pending",
+      "detail": "Prove same-origin Studio/Game Editing route opens from current build."
+    },
+    "saveProgression": {
+      "status": "pending",
+      "detail": "Prove persistence after reload with no duplicate payout/progression."
+    },
+    "signedInCollaboration": {
+      "status": "pending",
+      "detail": "Prove signed-in and two-user/collaboration flow if enabled for release."
+    },
+    "performance": {
+      "status": "pending",
+      "detail": "Verify browser console clean and acceptable adaptive FPS/scene budget on representative devices."
+    },
+    "finalProductionHandoff": {
+      "status": "pending",
+      "detail": "Promote only after all required gates pass."
+    }
+  }
+}
