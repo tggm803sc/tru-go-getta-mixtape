@@ -3,8 +3,17 @@ import { chromium } from 'playwright';
 const url=process.env.TGG_URL||process.argv[2];
 if(!url) throw new Error('TGG_URL or URL argument required');
 
-const browser=await chromium.launch({headless:true});
-const page=await browser.newPage();
+const proofMode=String(process.env.TGG_PROOF_MODE||'headless').toLowerCase();
+const headful=['headful','visible','ui','proof'].includes(proofMode);
+const screenshotPath=process.env.TGG_PROOF_SCREENSHOT||'';
+const browser=await chromium.launch({
+  headless:!headful,
+  args:process.env.TGG_BROWSER_ARGS?process.env.TGG_BROWSER_ARGS.split(/\s+/).filter(Boolean):[]
+});
+const context=await browser.newContext({
+  viewport:{width:Number(process.env.TGG_VIEWPORT_WIDTH||1280),height:Number(process.env.TGG_VIEWPORT_HEIGHT||1024)}
+});
+const page=await context.newPage();
 const consoleErrors=[];
 page.on('console',msg=>{ if(msg.type()==='error') consoleErrors.push(msg.text()) });
 page.on('pageerror',err=>consoleErrors.push(String(err)));
@@ -52,5 +61,14 @@ if(contract.releaseAcceptance!=='pass') throw new Error('release acceptance fail
 if(contract.longHaulAuthority!=='1'||contract.wholeWorldPreserved!=='1') throw new Error('v208 whole-world authority missing');
 if(consoleErrors.length) throw new Error('browser console errors: '+consoleErrors.slice(0,5).join(' | '));
 
-console.log(JSON.stringify({contract,consoleErrors},null,2));
+if(screenshotPath||headful){
+  const output=screenshotPath||'tgg-v208-browser-proof.png';
+  await page.screenshot({path:output,fullPage:true});
+  console.log('TGG_PROOF_SCREENSHOT='+output);
+}
+console.log(JSON.stringify({
+  proof:{mode:proofMode,headful,display:process.env.DISPLAY||null},
+  contract,
+  consoleErrors
+},null,2));
 await browser.close();
