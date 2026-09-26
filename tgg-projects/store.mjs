@@ -542,3 +542,14 @@ export async function runProjectAction(id,{action,ref='HEAD',timeout_ms=300000}=
   });
   return record;
 }
+
+
+export async function syncProjectWorktree(id){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  const project=await getProject(id);
+  if(project.dirty)throw new Error('project_dirty_git_receive_blocked');
+  await git(dir,['reset','--hard','HEAD']);
+  await git(dir,['clean','-fd']);
+  return getProject(id);
+}
