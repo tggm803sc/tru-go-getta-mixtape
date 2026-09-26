@@ -9,7 +9,7 @@ import {
   listIssues,createIssue,updateIssue,listPullRequests,createPullRequest,mergePullRequest,
   compareRefs,listTags,createTag,listReleases,createRelease,saveProjectArtifact,
   searchProject,getProjectActivity,createProjectBundle,listActions,runProjectAction,
-  projectExists,syncProjectWorktree
+  projectExists,syncProjectWorktree,configureProjectGitServer
 } from './store.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
@@ -28,6 +28,21 @@ function auth(req){
   if(!TOKEN)return true;
   const value=String(req.headers.authorization||'');
   return value==='Bearer '+TOKEN;
+}
+function gitAuth(req){
+  if(!TOKEN)return true;
+  const value=String(req.headers.authorization||'');
+  if(value==='Bearer '+TOKEN)return true;
+  if(value.startsWith('Basic ')){
+    try{
+      const raw=Buffer.from(value.slice(6),'base64').toString('utf8');
+      const i=raw.indexOf(':');
+      const user=i>=0?raw.slice(0,i):raw;
+      const pass=i>=0?raw.slice(i+1):'';
+      return pass===TOKEN||user===TOKEN;
+    }catch{return false}
+  }
+  return false;
 }
 async function body(req){
   let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>4*1024*1024)throw new Error('body_too_large')}
@@ -49,7 +64,8 @@ async function gitSmartHttp(req,res,url){
     send(res,404,{ok:false,error:'project_not_found'});
     return true;
   }
-  if(TOKEN&&!auth(req)){
+  await configureProjectGitServer(projectId);
+  if(TOKEN&&!gitAuth(req)){
     res.writeHead(401,{'www-authenticate':'Basic realm="TGG Source"','cache-control':'no-store'});
     res.end('Authentication required');
     return true;
