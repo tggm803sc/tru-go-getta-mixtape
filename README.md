@@ -114,3 +114,29 @@ npm run tgg:source:test
 Runtime owner: **TGG**
 
 The design goal is to keep source history, projects, creator workflows, release evidence, and backups under TGG-controlled services rather than depending on an external source-control platform for normal operation.
+
+
+## Git clone / fetch / push
+
+Each TGG Project is available as a Smart HTTP Git remote:
+
+```text
+https://YOUR-TGG-HOST/git/<project-id>.git
+```
+
+Examples:
+
+```bash
+git clone https://YOUR-TGG-HOST/git/tgg-source.git
+git remote add tgg https://YOUR-TGG-HOST/git/tgg-world.git
+git fetch tgg
+git push tgg main
+```
+
+When `TGG_PROJECTS_TOKEN` is enabled, Git clients can authenticate with the token as the password through their normal credential helper.
+
+Pushes use Git `receive.denyCurrentBranch=updateInstead` so the TGG working copy is updated safely when the checked-out branch receives a clean fast-forward/update.
+
+## Bundle exports
+
+TGG Source can create SHA-256 verified Git bundle exports from the dashboard or API. Bundles are downloadable directly from the TGG Source app and can be restored with standard Git tooling.
