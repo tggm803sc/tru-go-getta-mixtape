@@ -1,29 +1,37 @@
 # TGG World Migration Checkpoint
 
-Current live READY floor before migration:
-- Deployment: dpl_4x84ZugYUozB1rUeej9ZfWXVowQG
-- READY URL: tgg-world-play-3o2zeoirv-olandusgood-8594.vercel.app
-- READY commit: 111a0f4f50439096f34cd2462ee5ad9791267e38
-- READY overlay: v89
-
-Migration repository:
-- tggm803sc/tru-go-getta-mixtape
+## Canonical source
+- Repository: tggm803sc/tru-go-getta-mixtape
 - Branch: tgg-world-mega-1000x
+- Vercel org: team_TeV8b8Rv4jnchCzdYOOIehl2
+- Vercel project: prj_U2qDy9qZ5EZAKuHTEaA03BMmmplX
 
-Migration status:
-- exact live v89 master JS imported from protected READY deployment
-- exact live v89 master CSS imported
-- exact live v89 cleaner JS/CSS imported
-- v90 whole-world grounding applied on migrated source
-- v90 proxy contract recreated
-- v90 smoke contract recreated
+## Current source state
+- Master authority: 1000x-v208
+- Cleaner authority: 193
+- Graphics manifest: 57
+- Public proxy in canonical source: synchronized to v208 / cleaner 193
+- Browser smoke in canonical source: release-acceptance contract, not legacy v90 scenery smoke
+- Release mode: FROZEN — no new feature/graphics version work until acceptance gates pass
 
-v90 adds:
-- 144 curb/median instances
-- 72 storefront glass-depth instances
-- 132 terrain-prop instances
-- five-class traffic variety metadata
-- avatar/vehicle contact lighting
-- weather/time-aware contact-shadow tuning
+## What changed from the old migration checkpoint
+The old checkpoint stopped at v90 and warned not to replace READY v89 until migration proof. The migrated source has since advanced to v208 and already contains whole-world acceptance, final verification, production handoff, deployment convergence, release bridge, release acceptance, whole-game milestone, and long-haul travel authorities.
 
-Do not replace live READY v89 until the new repository is connected to deployment and v90 smoke passes.
+## Remaining release gates
+1. Exact live browser proof of v208 / cleaner 193 and release acceptance.
+2. Studio/Game Editing source restored or integrated into the canonical release path; prove /video-studio/.
+3. Save/reload proof for payout + progression with no duplicate claims.
+4. Signed-in + two-user/collaboration proof if included in launch scope.
+5. Real-browser performance and console acceptance.
+6. Final exact-SHA production handoff after the required gates pass.
+
+## Current verified evidence
+- Canonical repo and branch are accessible.
+- .vercel/project.json matches the intended TGG World Vercel project.
+- Vercel runtime errors: none found in the last-hour check.
+- Vercel has a READY deployment whose metadata says the fallback build context is aligned to V208 / cleaner 193.
+- Live browser acceptance is not yet proven because the browser automation wallet is currently out of credit.
+- The canonical migration repo does not currently contain the previous tgg-core/public/video-studio source tree.
+
+## Rule
+Do not add more visual milestone versions until the release gates above are closed.
