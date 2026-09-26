@@ -17,7 +17,8 @@
     "vercelProjectFile": "pass",
     "sourceProxySync": "pass",
     "runtimeErrorsLastHour": "pass",
-    "masterReleaseSystems": "present"
+    "masterReleaseSystems": "present",
+    "browserProofRunner": "pass"
   },
   "gates": {
     "exactDeployment": {
@@ -25,8 +26,8 @@
       "detail": "Vercel has a READY deployment aligned to V208/cleaner 193 by metadata, but the new canonical repo handoff has not been proven by live browser acceptance."
     },
     "publicBrowserAcceptance": {
-      "status": "blocked",
-      "detail": "Requires real-browser run of the V208 release smoke. TinyFish browser test is blocked by insufficient wallet credit."
+      "status": "pending-proof",
+      "detail": "V208 browser runner supports headless mode plus headful/visible proof with automatic Xvfb fallback and optional screenshot capture. Live acceptance against the exact READY deployment still must be executed."
     },
     "studioRoute": {
       "status": "blocked",
@@ -41,8 +42,8 @@
       "detail": "Signed-in and two-user/collaboration acceptance has not been proven on the migrated release candidate."
     },
     "performance": {
-      "status": "partial",
-      "detail": "No Vercel runtime errors in the last hour; real-browser console/FPS/device acceptance still required."
+      "status": "pending-proof",
+      "detail": "No Vercel runtime errors in the last hour. The repaired browser runner can now perform real-browser console/FPS/device acceptance; that live proof still needs to run against the exact accepted deployment."
     },
     "finalProductionHandoff": {
       "status": "pending",
@@ -50,11 +51,11 @@
     }
   },
   "nextActions": [
-    "Prove exact V208/193 build in a real browser and run release acceptance smoke.",
+    "Run game/mega-1000x/scripts/run-browser-proof.sh against the exact V208/193 READY URL with TGG_PROOF_MODE=headful (Xvfb is used automatically when DISPLAY is absent).",
+    "Capture the browser proof screenshot with TGG_PROOF_SCREENSHOT and verify the V208 release acceptance contract.",
     "Restore/integrate the Studio source into the canonical release path and prove /video-studio/.",
     "Run save/reload payout and progression persistence proof.",
     "Run signed-in and two-user/collaboration proof if collaboration is in launch scope.",
-    "Run adaptive performance/browser-console acceptance.",
     "Promote the exact accepted SHA as final production."
   ]
 }
