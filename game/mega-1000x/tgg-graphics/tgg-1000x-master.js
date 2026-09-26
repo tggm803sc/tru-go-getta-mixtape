@@ -3632,7 +3632,7 @@ function applyGraphicsManifestV57(){window.TGGGraphicsManifestV57?.sync?.(false)
 
 function installBuildIntegrityV58(){
   if(window.TGGBuildIntegrityV58)return;
-  const expected={overlay:'1000x-v89',graphics:'57',masterJs:'1000x-v89',cleanerJs:'79'};
+  const expected={overlay:'1000x-v90',graphics:'57',masterJs:'1000x-v90',cleanerJs:'80'};
   let lastInspectAt=0,lastStatus=null;
   const queryVersion=(needle)=>{
     const el=[...document.scripts].find(s=>String(s.src||'').includes(needle));
@@ -6001,7 +6001,122 @@ function installDistrictTransitionV89(){
   apply();
 }
 function applyDistrictTransitionV89(){window.TGGDistrictTransitionV89?.apply?.()||installDistrictTransitionV89()}
-function tick(){detectDistrict();motion();weather();applyDriveCatchup();applyCameraCatchup();applyLifeCatchup();applyMaxBatchPolish();applyUltraMegaBatch();applyPresentationDirector();applyUltraMaxDirector();applyWorldDensityMega();applyFullCityLifeBatch();applyVehicleShowcaseV16();applyOpenRoadV16();applyStreetRaceV17();applyTrafficVarietyV17();applyDistrictDepthV17();installGarageCustomizerV18();applyRaceNightV21();applyRoadDepthV21();applyRaceEventV22();applyTravelDepthV22();applyRaceCountdownV23();applyTravelCorridorsV23();applyRaceOpponentsV24();applyDestinationSpacingV24();applyStudioReturnV24();applyRaceProgressV25();applyOpponentAI25();applyReturnedWorldVfx25();applyRaceHudV26();installNitrousV26();applyReturnedEditorPresetV26();applyRaceResultsV27();applyOpponentDifficultyV27();applyNitrousBehaviorV27();applyRoadNetworkV27();applyReturnedMoodV27();applyRaceEconomyV28();applyOpponentCatchupV28();installNitrousRechargeV28();applyDistrictJunctionsV28();applyReturnedEnvironmentV28();installGarageEconomyV29();applyPerformanceStatsV29();applyHighwayNetworkV29();applyWeatherBlendV29();applyGarageHudV30();applyRaceTierV30();applyInterchangesV30();applyUpgradeFeedbackV30();applyRaceTierLocksV31();applyTierScaledRaceV31();applyVisualUpgradeEvolutionV31();applyCareerLinksV31();applyRaceEventsV32();applyRaceRewardEscalationV32();applyGarageEvolutionV32();applyCareerDestinationsV32();applyEventRoutesV33();applyRaceEntryV33();applyChampionshipBonusV33();applyGarageMilestonesV33();applyEventCardV33();installRaceStartGuardV34();applyEventCheckpointProgressV34();applyCareerPayoutV34();applyChampionshipHistoryV34();applyCareerLadderHudV34();installRaceTimingV35();applyRaceTimingV35();applyCareerXpV35();applyCareerUnlocksV35();applyRaceResultsScreenV35();applyPostRaceFlowV35();applyEventCompletionV36();applyCareerUnlockPersistenceV36();applyTierRivalsV36();applyAchievementsV36();applyNextObjectiveV36();enhanceResultsActionsV36();applyRivalBehaviorV37();applyWinStreakV37();applyAchievementRewardsV37();applyGarageReturnV37();applyCareerDashboardV37();applyRivalChallengeV38();applyStreakRiskRewardV38();applyAchievementToastV38();applyNextTierGateV38();enhanceCareerDashboardV38();installRivalShowdownsV39();applyRivalRouteV39();applyStreakPayoutV39();applyAchievementsPanelV39();enforceTierUnlocksV39();enhanceResultsRivalV39();applyRivalSeriesV40();applyCrewReputationV40();applySeasonPointsV40();applyChampionshipQualificationV40();applySeasonStandingsV40();applySeasonSummaryV40();installChampionshipFinaleV41();applyChampionshipRouteV41();applySeriesCompletionRewardV41();applyCrewRankV41();applySeasonTrophyV41();applySeasonFinaleResultsV41();installNextSeasonV41();applySeasonHistoryV42();applyTrophyDisplayV42();applyCrewRankRewardsV42();applyFinaleRivalV42();installNewSeasonSetupV42();applySeasonLegacyPanelV42();installRaceLifecycleV43();applyRaceLifecycleV43();installNitrousRestoreV43();applyEnvironmentDirectorV43();installHudDirectorV44();applyHudDirectorV44();installGraphicsDirectorV50();applyGraphicsDirectorV50();installVisualProductionV51();applyVisualProductionV51();installOpenWorldCompositionV52();applyOpenWorldCompositionV52();installWorldRegionsV53();applyWorldRegionsV53();installNightDriveV54();applyNightDriveV54();installGraphicsPerformanceV55();applyGraphicsPerformanceV55();installGraphicsOwnershipV56();applyGraphicsOwnershipV56();installGraphicsManifestV57();applyGraphicsManifestV57();installBuildIntegrityV58();applyBuildIntegrityV58();installBuildFailSafeV59();applyBuildFailSafeV59();installBuildRecoveryV60();applyBuildRecoveryV60();installRaceCoreAuthorityV61();applyRaceCoreAuthorityV61();installRaceTierAuthorityV62();applyRaceTierAuthorityV62();installCheckpointAuthorityV63();applyCheckpointAuthorityV63();installOpponentRouteAuthorityV64();applyOpponentRouteAuthorityV64();installOpponentDynamicsV65();applyOpponentDynamicsV65();installRacecraftV66();applyRacecraftV66();installPayoutAuthorityV67();applyPayoutAuthorityV67();installProgressAuthorityV68();applyProgressAuthorityV68();installRewardIntegrityV69();applyRewardIntegrityV69();installRuntimeEfficiencyV70();applyRuntimeEfficiencyV70();installRuntimeHotspotCacheV71();applyRuntimeHotspotCacheV71();installVisualBudgetV72();applyVisualBudgetV72();installSystemIntegrityV73();applySystemIntegrityV73();installAuthorityConsolidationV74();applyAuthorityConsolidationV74();installWorldVisualOverhaulV75();applyWorldVisualOverhaulV75();installOpenWorldExpansionV76();applyOpenWorldExpansionV76();installDistrictIdentityV77();applyDistrictIdentityV77();installWorldSurfacePolishV78();applyWorldSurfacePolishV78();installPremiumWorldPresentationV79();applyPremiumWorldPresentationV79();installNightCohesionV80();applyNightCohesionV80();installDaylightRealismV81();applyDaylightRealismV81();installWorldArtDirectionV82();applyWorldArtDirectionV82();installWorldDepthCuesV83();applyWorldDepthCuesV83();installAmbientWorldMotionV84();applyAmbientWorldMotionV84();installWorldGroundingV85();applyWorldGroundingV85();installWorldFinishDetailV86();applyWorldFinishDetailV86();installWorldMicrodetailV87();applyWorldMicrodetailV87();installTravelIdentityV88();applyTravelIdentityV88();installDistrictTransitionV89();applyDistrictTransitionV89();applyPlaytestQuickAccess()}
+
+function installWorldGroundingV90(){
+  if(window.TGGWorldGroundingV90)return;
+  const THREE=window.THREE,w=window.TGG3D;
+  if(!THREE||!w?.scene){root.dataset.tggWorldGroundingV90='waiting';return}
+  const scene=w.scene;
+
+  let curbs=scene.getObjectByName?.('TGG_CURB_MEDIAN_V90');
+  if(!curbs&&THREE.InstancedMesh){
+    const geo=new THREE.BoxGeometry(5.6,.22,.5);
+    const mat=new THREE.MeshStandardMaterial({color:0x777c82,roughness:.9,metalness:.02});
+    curbs=new THREE.InstancedMesh(geo,mat,144);curbs.name='TGG_CURB_MEDIAN_V90';
+    const m=new THREE.Matrix4(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3(1,1,1);
+    for(let i=0;i<144;i++){
+      const axis=i%2,side=i%4<2?-1:1,step=Math.floor(i/4)-18;
+      p.set(axis?step*7.1:side*9.7,.11,axis?side*9.7:step*7.1);
+      q.setFromEuler(new THREE.Euler(0,axis?Math.PI/2:0,0));m.compose(p,q,s);curbs.setMatrixAt(i,m);
+    }
+    curbs.instanceMatrix.needsUpdate=true;scene.add(curbs);
+  }
+
+  let glassDepth=scene.getObjectByName?.('TGG_STOREFRONT_GLASS_DEPTH_V90');
+  if(!glassDepth&&THREE.InstancedMesh){
+    const geo=new THREE.PlaneGeometry(4.8,3.1);
+    const mat=new THREE.MeshPhysicalMaterial({color:0x6f91aa,roughness:.06,metalness:.08,transparent:true,opacity:.18,transmission:.16,depthWrite:false,side:THREE.DoubleSide});
+    glassDepth=new THREE.InstancedMesh(geo,mat,72);glassDepth.name='TGG_STOREFRONT_GLASS_DEPTH_V90';
+    const m=new THREE.Matrix4(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
+    for(let i=0;i<72;i++){
+      const side=i%4,step=Math.floor(i/4)-9;let x=0,z=0,r=0;const d=82+(i%3)*8;
+      if(side===0){x=-d;z=step*16;r=Math.PI/2}
+      if(side===1){x=d;z=step*16;r=-Math.PI/2}
+      if(side===2){x=step*16;z=-d;r=0}
+      if(side===3){x=step*16;z=d;r=Math.PI}
+      p.set(x,2.2,z);q.setFromEuler(new THREE.Euler(0,r,0));
+      const sc=.84+(i%4)*.08;s.set(sc,1,1);m.compose(p,q,s);glassDepth.setMatrixAt(i,m);
+    }
+    glassDepth.instanceMatrix.needsUpdate=true;scene.add(glassDepth);
+  }
+
+  let terrainProps=scene.getObjectByName?.('TGG_TERRAIN_PROPS_V90');
+  if(!terrainProps&&THREE.InstancedMesh){
+    const geo=new THREE.CylinderGeometry(.22,.36,1.2,6);
+    const mat=new THREE.MeshStandardMaterial({color:0x5b5248,roughness:.98});
+    terrainProps=new THREE.InstancedMesh(geo,mat,132);terrainProps.name='TGG_TERRAIN_PROPS_V90';
+    const m=new THREE.Matrix4(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
+    for(let i=0;i<132;i++){
+      const a=(i/132)*Math.PI*5,r=210+(i%12)*38;
+      p.set(Math.cos(a)*r,.6,Math.sin(a)*r);q.setFromEuler(new THREE.Euler(0,a*.8,0));
+      const sc=.55+(i%6)*.1;s.set(sc,.7+(i%4)*.12,sc);m.compose(p,q,s);terrainProps.setMatrixAt(i,m);
+    }
+    terrainProps.instanceMatrix.needsUpdate=true;scene.add(terrainProps);
+  }
+
+  let contactLight=scene.getObjectByName?.('TGG_CONTACT_LIGHT_V90');
+  if(!contactLight){
+    contactLight=new THREE.PointLight(0xd9ecff,0,11,2);contactLight.name='TGG_CONTACT_LIGHT_V90';scene.add(contactLight);
+  }
+
+  let avatar=null,lastAvatarScan=0,lastSig='';
+  const findAvatar=()=>{
+    if(avatar?.parent)return avatar;
+    const now=performance.now();if(now-lastAvatarScan<2500)return avatar;lastAvatarScan=now;
+    scene.traverse?.(o=>{if(avatar)return;const n=String(o?.name||'').toLowerCase();if(/player|avatar|character/.test(n)&&o?.position)avatar=o});
+    return avatar;
+  };
+
+  const applyTrafficVariety=()=>{
+    const traffic=w.traffic||[];
+    traffic.forEach((v,i)=>{
+      if(!v?.userData)return;
+      const cls=i%5;
+      v.userData.tggTrafficClassV90=['compact','sedan','muscle','utility','luxury'][cls];
+      v.userData.tggTrafficScaleV90=[.92,1,1.05,1.08,.98][cls];
+      if(v.scale&&v.userData.tggTrafficScaleAppliedV90!=='1'){
+        v.scale.multiplyScalar?.(v.userData.tggTrafficScaleV90);
+        v.userData.tggTrafficScaleAppliedV90='1';
+      }
+    });
+    root.dataset.tggTrafficVarietyV90=traffic.length?String(Math.min(5,traffic.length)):'0';
+  };
+
+  const apply=()=>{
+    const district=String(root.dataset.tggDistrict||'downtown'),time=String(root.dataset.tggTime||'day');
+    const weather=String(root.dataset.tggWeather||'clear'),quality=root.dataset.tggGraphicsAdaptiveV55||state.quality||'high';
+    const driving=root.dataset.tggDriving==='1'||state.driving,night=time==='night',wet=/rain|storm/.test(weather),balanced=quality==='balanced';
+    const sig=[district,time,weather,quality,driving?'1':'0'].join('|');
+    if(sig!==lastSig){
+      lastSig=sig;
+      if(curbs){curbs.visible=district!=='park'||driving;curbs.material.color.setHex(district==='home'?0x86827a:district==='studio'?0x70727b:0x777c82);curbs.material.roughness=wet?.62:.9}
+      if(glassDepth){glassDepth.visible=district!=='park'&&!balanced;glassDepth.material.opacity=night?.28:wet?.24:.17;glassDepth.material.roughness=wet?.03:.07}
+      if(terrainProps){terrainProps.visible=(district==='park'||district==='home'||driving)&&!balanced;terrainProps.material.color.setHex(district==='park'?0x4e5a45:0x5b5248)}
+    }
+
+    applyTrafficVariety();
+    const av=findAvatar(),focus=driving?w.car:av;
+    if(focus?.position&&!balanced){
+      contactLight.position.set(focus.position.x,focus.position.y+1.2,focus.position.z);
+      contactLight.intensity=night?1.05:wet?.62:.34;
+      contactLight.color.setHex(night?0x9ec7ff:wet?0xc7ddf0:0xffddb5);
+      root.dataset.tggContactLightingV90=driving?'vehicle':'avatar';
+    }else{contactLight.intensity=0;root.dataset.tggContactLightingV90=focus?'disabled-balanced':'waiting'}
+
+    const avShadow=scene.getObjectByName?.('TGG_AVATAR_CONTACT_V77');if(avShadow?.material)avShadow.material.opacity=night?.36:wet?.31:.25;
+    const carShadow=scene.getObjectByName?.('TGG_VEHICLE_CONTACT_V80');if(carShadow?.material)carShadow.material.opacity=night?.36:wet?.34:.28;
+
+    root.dataset.tggCurbMedianV90=curbs?'144':'0';
+    root.dataset.tggStorefrontGlassDepthV90=glassDepth?'72':'0';
+    root.dataset.tggTerrainPropsV90=terrainProps?'132':'0';
+    root.dataset.tggGroundContactModelV90='shadow+contact-light';
+    root.dataset.tggWorldGroundingV90='1';
+  };
+
+  window.TGGWorldGroundingV90={apply};apply();
+}
+function applyWorldGroundingV90(){window.TGGWorldGroundingV90?.apply?.()||installWorldGroundingV90()}
+function tick(){detectDistrict();motion();weather();applyDriveCatchup();applyCameraCatchup();applyLifeCatchup();applyMaxBatchPolish();applyUltraMegaBatch();applyPresentationDirector();applyUltraMaxDirector();applyWorldDensityMega();applyFullCityLifeBatch();applyVehicleShowcaseV16();applyOpenRoadV16();applyStreetRaceV17();applyTrafficVarietyV17();applyDistrictDepthV17();installGarageCustomizerV18();applyRaceNightV21();applyRoadDepthV21();applyRaceEventV22();applyTravelDepthV22();applyRaceCountdownV23();applyTravelCorridorsV23();applyRaceOpponentsV24();applyDestinationSpacingV24();applyStudioReturnV24();applyRaceProgressV25();applyOpponentAI25();applyReturnedWorldVfx25();applyRaceHudV26();installNitrousV26();applyReturnedEditorPresetV26();applyRaceResultsV27();applyOpponentDifficultyV27();applyNitrousBehaviorV27();applyRoadNetworkV27();applyReturnedMoodV27();applyRaceEconomyV28();applyOpponentCatchupV28();installNitrousRechargeV28();applyDistrictJunctionsV28();applyReturnedEnvironmentV28();installGarageEconomyV29();applyPerformanceStatsV29();applyHighwayNetworkV29();applyWeatherBlendV29();applyGarageHudV30();applyRaceTierV30();applyInterchangesV30();applyUpgradeFeedbackV30();applyRaceTierLocksV31();applyTierScaledRaceV31();applyVisualUpgradeEvolutionV31();applyCareerLinksV31();applyRaceEventsV32();applyRaceRewardEscalationV32();applyGarageEvolutionV32();applyCareerDestinationsV32();applyEventRoutesV33();applyRaceEntryV33();applyChampionshipBonusV33();applyGarageMilestonesV33();applyEventCardV33();installRaceStartGuardV34();applyEventCheckpointProgressV34();applyCareerPayoutV34();applyChampionshipHistoryV34();applyCareerLadderHudV34();installRaceTimingV35();applyRaceTimingV35();applyCareerXpV35();applyCareerUnlocksV35();applyRaceResultsScreenV35();applyPostRaceFlowV35();applyEventCompletionV36();applyCareerUnlockPersistenceV36();applyTierRivalsV36();applyAchievementsV36();applyNextObjectiveV36();enhanceResultsActionsV36();applyRivalBehaviorV37();applyWinStreakV37();applyAchievementRewardsV37();applyGarageReturnV37();applyCareerDashboardV37();applyRivalChallengeV38();applyStreakRiskRewardV38();applyAchievementToastV38();applyNextTierGateV38();enhanceCareerDashboardV38();installRivalShowdownsV39();applyRivalRouteV39();applyStreakPayoutV39();applyAchievementsPanelV39();enforceTierUnlocksV39();enhanceResultsRivalV39();applyRivalSeriesV40();applyCrewReputationV40();applySeasonPointsV40();applyChampionshipQualificationV40();applySeasonStandingsV40();applySeasonSummaryV40();installChampionshipFinaleV41();applyChampionshipRouteV41();applySeriesCompletionRewardV41();applyCrewRankV41();applySeasonTrophyV41();applySeasonFinaleResultsV41();installNextSeasonV41();applySeasonHistoryV42();applyTrophyDisplayV42();applyCrewRankRewardsV42();applyFinaleRivalV42();installNewSeasonSetupV42();applySeasonLegacyPanelV42();installRaceLifecycleV43();applyRaceLifecycleV43();installNitrousRestoreV43();applyEnvironmentDirectorV43();installHudDirectorV44();applyHudDirectorV44();installGraphicsDirectorV50();applyGraphicsDirectorV50();installVisualProductionV51();applyVisualProductionV51();installOpenWorldCompositionV52();applyOpenWorldCompositionV52();installWorldRegionsV53();applyWorldRegionsV53();installNightDriveV54();applyNightDriveV54();installGraphicsPerformanceV55();applyGraphicsPerformanceV55();installGraphicsOwnershipV56();applyGraphicsOwnershipV56();installGraphicsManifestV57();applyGraphicsManifestV57();installBuildIntegrityV58();applyBuildIntegrityV58();installBuildFailSafeV59();applyBuildFailSafeV59();installBuildRecoveryV60();applyBuildRecoveryV60();installRaceCoreAuthorityV61();applyRaceCoreAuthorityV61();installRaceTierAuthorityV62();applyRaceTierAuthorityV62();installCheckpointAuthorityV63();applyCheckpointAuthorityV63();installOpponentRouteAuthorityV64();applyOpponentRouteAuthorityV64();installOpponentDynamicsV65();applyOpponentDynamicsV65();installRacecraftV66();applyRacecraftV66();installPayoutAuthorityV67();applyPayoutAuthorityV67();installProgressAuthorityV68();applyProgressAuthorityV68();installRewardIntegrityV69();applyRewardIntegrityV69();installRuntimeEfficiencyV70();applyRuntimeEfficiencyV70();installRuntimeHotspotCacheV71();applyRuntimeHotspotCacheV71();installVisualBudgetV72();applyVisualBudgetV72();installSystemIntegrityV73();applySystemIntegrityV73();installAuthorityConsolidationV74();applyAuthorityConsolidationV74();installWorldVisualOverhaulV75();applyWorldVisualOverhaulV75();installOpenWorldExpansionV76();applyOpenWorldExpansionV76();installDistrictIdentityV77();applyDistrictIdentityV77();installWorldSurfacePolishV78();applyWorldSurfacePolishV78();installPremiumWorldPresentationV79();applyPremiumWorldPresentationV79();installNightCohesionV80();applyNightCohesionV80();installDaylightRealismV81();applyDaylightRealismV81();installWorldArtDirectionV82();applyWorldArtDirectionV82();installWorldDepthCuesV83();applyWorldDepthCuesV83();installAmbientWorldMotionV84();applyAmbientWorldMotionV84();installWorldGroundingV85();applyWorldGroundingV85();installWorldFinishDetailV86();applyWorldFinishDetailV86();installWorldMicrodetailV87();applyWorldMicrodetailV87();installTravelIdentityV88();applyTravelIdentityV88();installDistrictTransitionV89();applyDistrictTransitionV89();installWorldGroundingV90();applyWorldGroundingV90();applyPlaytestQuickAccess()}
 syncAvatar();ambient();quality();ui();tick();applyDriveCatchup();applyCameraCatchup();applyLifeCatchup();applyMaxBatchPolish();applyUltraMegaBatch();applyPresentationDirector();applyUltraMaxDirector();applyWorldDensityMega();applyFullCityLifeBatch();applyVehicleShowcaseV16();applyOpenRoadV16();applyPlaytestQuickAccess();
 addEventListener('tgg-world-avatar-changed',e=>{try{localStorage.setItem('tgg-world-avatar-v12',JSON.stringify(e.detail||{}))}catch{};syncAvatar()});
 addEventListener('storage',e=>{if(e.key==='tgg-world-avatar-v12')syncAvatar()});
