@@ -3,6 +3,13 @@
   "owner": "TGG",
   "projects": [
     {
+      "id": "tgg-source",
+      "name": "TGG Source",
+      "kind": "source-control",
+      "default_branch": "main",
+      "description": "TGG-owned GitHub-style source control and project platform"
+    },
+    {
       "id": "tgg-world",
       "name": "TGG World",
       "kind": "game",
