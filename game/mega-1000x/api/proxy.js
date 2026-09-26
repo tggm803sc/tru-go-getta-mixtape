@@ -8,13 +8,13 @@ export default async function handler(req,res){
     let body=Buffer.from(await r.arrayBuffer());
     if(type.includes('text/html')){
       let html=body.toString('utf8');
-      const build='<script>window.__TGG_BUILD__={overlay:"1000x-v90",graphics:"57",masterCss:"1000x-v90",masterJs:"1000x-v90",cleanerCss:"80",cleanerJs:"80"};<\/script>';
+      const build='<script>window.__TGG_BUILD__={overlay:"1000x-v208",graphics:"57",masterCss:"1000x-v208",masterJs:"1000x-v208",cleanerCss:"193",cleanerJs:"193"};<\/script>';
       const assets=[
-        '<link rel="stylesheet" href="/tgg-graphics/tgg-1000x-master.css?v=1000x-v90">',
-        '<link rel="stylesheet" href="/tgg-graphics/tgg-screen-cleaner-2026.css?v=80">',
+        '<link rel="stylesheet" href="/tgg-graphics/tgg-1000x-master.css?v=1000x-v208">',
+        '<link rel="stylesheet" href="/tgg-graphics/tgg-screen-cleaner-2026.css?v=193">',
         build,
-        '<script defer src="/tgg-graphics/tgg-1000x-master.js?v=1000x-v90"><\/script>',
-        '<script defer src="/tgg-graphics/tgg-screen-cleaner-2026.js?v=80"><\/script>'
+        '<script defer src="/tgg-graphics/tgg-1000x-master.js?v=1000x-v208"><\/script>',
+        '<script defer src="/tgg-graphics/tgg-screen-cleaner-2026.js?v=193"><\/script>'
       ].join('');
       html=html.replace(/<\/head>/i,assets+'</head>');
       body=Buffer.from(html,'utf8');
@@ -23,7 +23,7 @@ export default async function handler(req,res){
     for(const [k,v] of r.headers.entries()){
       if(!['content-length','content-encoding','transfer-encoding','content-security-policy'].includes(k.toLowerCase()))res.setHeader(k,v);
     }
-    res.setHeader('x-tgg-overlay','1000x-v90');
+    res.setHeader('x-tgg-overlay','1000x-v208');
     res.setHeader('cache-control','no-store');
     res.end(body);
   }catch(err){
