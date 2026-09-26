@@ -1,0 +1,84 @@
+{
+  "schema": "tgg.higgsfield.presets/v1",
+  "owner": "TGG",
+  "presets": [
+    {
+      "id": "world-cinematic",
+      "name": "TGG World Cinematic",
+      "type": "world-shot",
+      "description": "Cinematic open-world establishing shots, driving sequences, districts and environments.",
+      "defaults": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 8,
+        "motion": "cinematic",
+        "camera": "wide-tracking",
+        "quality": "high"
+      }
+    },
+    {
+      "id": "avatar-hero",
+      "name": "TGG Avatar Hero",
+      "type": "avatar",
+      "description": "High-detail avatar presentation, wardrobe, jewelry, hair and character identity shots.",
+      "defaults": {
+        "aspect_ratio": "9:16",
+        "duration_seconds": 6,
+        "motion": "hero-orbit",
+        "camera": "portrait",
+        "quality": "high"
+      }
+    },
+    {
+      "id": "vehicle-commercial",
+      "name": "TGG Vehicle Commercial",
+      "type": "video",
+      "description": "Realistic car showcase, rolling shots, reflections, wheel detail and night-city driving.",
+      "defaults": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 8,
+        "motion": "rolling-rig",
+        "camera": "low-chase",
+        "quality": "high"
+      }
+    },
+    {
+      "id": "music-video-vfx",
+      "name": "TGG Music Video VFX",
+      "type": "vfx",
+      "description": "Performance visuals, transitions, particles, glow, atmosphere and artist-focused VFX.",
+      "defaults": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 8,
+        "motion": "performance",
+        "camera": "music-video",
+        "quality": "high"
+      }
+    },
+    {
+      "id": "game-trailer",
+      "name": "TGG Game Trailer",
+      "type": "video",
+      "description": "Trailer-ready gameplay presentation with city, racing, creator, studio and lifestyle beats.",
+      "defaults": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 10,
+        "motion": "trailer",
+        "camera": "dynamic",
+        "quality": "high"
+      }
+    },
+    {
+      "id": "social-ad",
+      "name": "TGG Social Ad",
+      "type": "ad-variant",
+      "description": "Short vertical promotional variants for TGG releases, music, game content and creator campaigns.",
+      "defaults": {
+        "aspect_ratio": "9:16",
+        "duration_seconds": 6,
+        "motion": "fast-cut",
+        "camera": "social",
+        "quality": "high"
+      }
+    }
+  ]
+}
