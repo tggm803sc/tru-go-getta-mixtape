@@ -12,6 +12,7 @@ const BACKEND_TOKEN=String(process.env.TGG_HIGGSFIELD_BACKEND_TOKEN||'').trim();
 const PROJECTS_URL=String(process.env.TGG_PROJECTS_URL||'http://127.0.0.1:10110').trim().replace(/\/$/,'');
 const PROJECTS_TOKEN=String(process.env.TGG_PROJECTS_TOKEN||'').trim();
 const PRESETS_FILE=path.resolve(process.env.TGG_HIGGSFIELD_PRESETS_FILE||path.join(process.cwd(),'tgg-higgsfield','presets.json'));
+const WORKSPACE_FILE=path.resolve(process.env.TGG_HIGGSFIELD_WORKSPACE_FILE||path.join(process.cwd(),'tgg-higgsfield','workspace.json'));
 
 await fs.mkdir(path.join(ROOT,'jobs'),{recursive:true});
 
@@ -53,6 +54,10 @@ async function persistProjectJob(job,{event='update'}={}){
   }catch(error){
     return {ok:false,project_id:projectId,error:String(error?.message||error)};
   }
+}
+async function loadWorkspace(){
+  try{return JSON.parse(await fs.readFile(WORKSPACE_FILE,'utf8'))}
+  catch{return {id:'tgg-higgsfield',owner:'TGG',capabilities:[],pipelines:[]}}
 }
 async function loadPresets(){
   try{
@@ -148,8 +153,15 @@ async function dispatch(job){
 const server=http.createServer(async(req,res)=>{
   const url=new URL(req.url,'http://tgg.local');
   try{
-    if(req.method==='GET'&&url.pathname==='/health')return send(res,200,{ok:true,service:'tgg-higgsfield',owner:'TGG',mode:BACKEND?'backend':'local-queue',projects_url:PROJECTS_URL,project_persistence:true,time:new Date().toISOString()});
+    if(req.method==='GET'&&url.pathname==='/health'){
+      const workspace=await loadWorkspace();
+      return send(res,200,{ok:true,service:'tgg-higgsfield',owner:'TGG',workspace:workspace.id||'tgg-higgsfield',capabilities:workspace.capabilities||[],mode:BACKEND?'backend':'local-queue',projects_url:PROJECTS_URL,project_persistence:true,time:new Date().toISOString()});
+    }
     if(url.pathname.startsWith('/v1/')&&req.method!=='GET'&&!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+    if(req.method==='GET'&&url.pathname==='/v1/capabilities'){
+      const workspace=await loadWorkspace();
+      return send(res,200,{ok:true,owner:'TGG',service:'tgg-higgsfield',workspace});
+    }
     if(req.method==='GET'&&url.pathname==='/v1/presets'){
       return send(res,200,{ok:true,owner:'TGG',service:'tgg-higgsfield',presets:await loadPresets()});
     }
@@ -166,7 +178,7 @@ const server=http.createServer(async(req,res)=>{
       const type=String(input.type||preset?.type||'image').trim();
       if(!['image','video','vfx','avatar','world-shot','ad-variant'].includes(type))throw new Error('unsupported_job_type');
       const job={
-        id:id(),owner:'TGG',service:'tgg-higgsfield',status:'created',
+        id:id(),owner:'TGG',service:'tgg-higgsfield',workspace_id:'tgg-higgsfield',status:'created',
         type,project_id:String(input.project_id||'tgg-world'),
         preset_id:preset?.id||null,
         preset_name:preset?.name||null,
