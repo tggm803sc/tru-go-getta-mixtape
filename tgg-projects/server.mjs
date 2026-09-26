@@ -7,7 +7,7 @@ import {
   listCommits,listFiles,readFileAtRef,writeFileAndCommit,getStatus,
   listIssues,createIssue,updateIssue,listPullRequests,createPullRequest,mergePullRequest,
   compareRefs,listTags,createTag,listReleases,createRelease,saveProjectArtifact,
-  searchProject,getProjectActivity,createProjectBundle
+  searchProject,getProjectActivity,createProjectBundle,listActions,runProjectAction
 } from './store.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
@@ -108,6 +108,13 @@ const server=http.createServer(async(req,res)=>{
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/activity$/);
     if(method==='GET'&&m)return send(res,200,{ok:true,activity:await getProjectActivity(dec(m[1]),{limit:url.searchParams.get('limit')||100})});
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/actions$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,actions:await listActions(dec(m[1]))});
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,202,{ok:true,action:await runProjectAction(dec(m[1]),input)});
+    }
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/search$/);
     if(method==='GET'&&m)return send(res,200,{ok:true,...await searchProject(dec(m[1]),{
