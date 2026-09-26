@@ -6,9 +6,12 @@
   "description": "TGG-owned project and Git repository service",
   "scripts": {
     "start": "node tgg-projects/server.mjs",
-    "check": "node --check tgg-projects/server.mjs && node --check tgg-projects/store.mjs && node --check tgg-higgsfield/bridge.mjs",
+    "check": "npm run tgg:projects:check && node --check tgg-higgsfield/bridge.mjs",
     "tgg:projects": "node tgg-projects/server.mjs",
-    "tgg:higgsfield": "node tgg-higgsfield/bridge.mjs"
+    "tgg:higgsfield": "node tgg-higgsfield/bridge.mjs",
+    "tgg:projects:bootstrap": "node scripts/tgg-projects-bootstrap.mjs",
+    "tgg:projects:backup": "node scripts/tgg-projects-backup.mjs",
+    "tgg:projects:check": "node --check tgg-projects/store.mjs && node --check tgg-projects/server.mjs && node --check scripts/tgg-projects-bootstrap.mjs && node --check scripts/tgg-projects-backup.mjs"
   },
   "engines": {
     "node": ">=20"
