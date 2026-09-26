@@ -39,6 +39,12 @@ assert.match(snapshot,/ignoredDirs/);
 assert.match(store,/worktree.*add/s);
 assert.match(store,/action_not_allowed/);
 assert.match(dashboard,/runAction/);
+assert.match(dashboard,/copyCloneUrl/);
+assert.match(server,/git http-backend|http-backend/);
+assert.match(server,/gitAuth/);
+assert.match(server,/git-receive-pack/);
+assert.match(store,/receive\.denyCurrentBranch/);
+assert.match(store,/updateInstead/);
 
 assert.equal(
   pkg.scripts?.['tgg:projects:save-all'],
@@ -57,6 +63,8 @@ console.log(JSON.stringify({
   releases:true,
   bundle_export:true,
   actions:true,
+  smart_http_git:true,
+  clone_fetch_push:true,
   higgsfield_every_project:true,
   save_all:true
 },null,2));
