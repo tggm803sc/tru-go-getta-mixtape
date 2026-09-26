@@ -13,6 +13,8 @@ const HERE=path.dirname(fileURLToPath(import.meta.url));
 const PORT=Number(process.env.TGG_PROJECTS_PORT||10110);
 const HOST=process.env.TGG_PROJECTS_HOST||'0.0.0.0';
 const TOKEN=String(process.env.TGG_PROJECTS_TOKEN||'').trim();
+const HIGGSFIELD_URL=String(process.env.TGG_HIGGSFIELD_URL||'http://127.0.0.1:10130').trim().replace(/\/$/,'');
+const HIGGSFIELD_TOKEN=String(process.env.TGG_HIGGSFIELD_TOKEN||'').trim();
 
 function send(res,status,body,headers={}){
   const data=typeof body==='string'?body:JSON.stringify(body,null,2);
@@ -36,6 +38,24 @@ function errorStatus(message){
   if(/invalid|required/.test(message))return 400;
   return 500;
 }
+async function higgsfieldProxy(req,res,url){
+  const target=url.pathname.replace(/^\/v1\/higgsfield/,'/v1')+url.search;
+  const method=req.method||'GET';
+  let payload=null;
+  if(!['GET','HEAD'].includes(method))payload=await body(req);
+  const response=await fetch(HIGGSFIELD_URL+target,{
+    method,
+    headers:{
+      ...(payload!==null?{'content-type':'application/json'}:{}),
+      ...(HIGGSFIELD_TOKEN?{authorization:'Bearer '+HIGGSFIELD_TOKEN}:{})
+    },
+    ...(payload!==null?{body:JSON.stringify(payload)}:{}),
+    signal:AbortSignal.timeout(120000)
+  });
+  const text=await response.text();
+  let result;try{result=text?JSON.parse(text):{}}catch{result={ok:false,error:'invalid_higgsfield_response'}}
+  return send(res,response.status,result);
+}
 async function dashboard(res){
   const html=await fs.readFile(path.join(HERE,'dashboard.html'),'utf8');
   res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});
@@ -53,6 +73,9 @@ const server=http.createServer(async(req,res)=>{
     }
     if(method==='GET'&&(url.pathname==='/'||url.pathname==='/app'))return dashboard(res);
     if(url.pathname.startsWith('/v1/')&&method!=='GET'&&!auth(req))return send(res,401,{ok:false,error:'unauthorized'});
+    if(url.pathname==='/v1/higgsfield'||url.pathname.startsWith('/v1/higgsfield/')){
+      return higgsfieldProxy(req,res,url);
+    }
 
     if(method==='GET'&&url.pathname==='/v1/projects'){
       return send(res,200,{ok:true,projects:await listProjects()});
