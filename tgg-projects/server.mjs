@@ -6,7 +6,8 @@ import {
   ROOT,ensureRoot,listProjects,getProject,createProject,importGitProject,listBranches,createBranch,
   listCommits,listFiles,readFileAtRef,writeFileAndCommit,getStatus,
   listIssues,createIssue,updateIssue,listPullRequests,createPullRequest,mergePullRequest,
-  compareRefs,listTags,createTag,listReleases,createRelease,saveProjectArtifact
+  compareRefs,listTags,createTag,listReleases,createRelease,saveProjectArtifact,
+  searchProject,getProjectActivity,createProjectBundle
 } from './store.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
@@ -104,6 +105,22 @@ const server=http.createServer(async(req,res)=>{
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/commits$/);
     if(method==='GET'&&m)return send(res,200,{ok:true,commits:await listCommits(dec(m[1]),{limit:url.searchParams.get('limit')||50})});
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/activity$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,activity:await getProjectActivity(dec(m[1]),{limit:url.searchParams.get('limit')||100})});
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/search$/);
+    if(method==='GET'&&m)return send(res,200,{ok:true,...await searchProject(dec(m[1]),{
+      query:url.searchParams.get('q'),
+      ref:url.searchParams.get('ref')||'HEAD',
+      limit:url.searchParams.get('limit')||100
+    })});
+
+    m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/export$/);
+    if(method==='POST'&&m){
+      const input=await body(req);
+      return send(res,201,{ok:true,export:await createProjectBundle(dec(m[1]),{ref:input.ref||'--all'})});
+    }
 
     m=url.pathname.match(/^\/v1\/projects\/([^/]+)\/issues$/);
     if(method==='GET'&&m)return send(res,200,{ok:true,issues:await listIssues(dec(m[1]))});
