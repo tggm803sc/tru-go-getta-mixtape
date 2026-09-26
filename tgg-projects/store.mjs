@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 
@@ -370,4 +371,88 @@ export async function createRelease(id,{tag,title,notes='',ref='HEAD'}={}){
 
 export async function saveProjectArtifact(id,file,content,{message='Save TGG artifact'}={}){
   return writeFileAndCommit(id,safeRelative(file),typeof content==='string'?content:JSON.stringify(content,null,2)+'\n',{message});
+}
+
+
+export async function searchProject(id,{query,ref='HEAD',limit=100}={}){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  ref=safeRef(ref);
+  const q=String(query||'').trim();
+  if(!q)throw new Error('query_required');
+  if(q.length>240)throw new Error('query_too_long');
+  limit=Math.max(1,Math.min(250,Number(limit)||100));
+
+  const files=await listFiles(id,{ref});
+  const fileMatches=files.filter(file=>file.toLowerCase().includes(q.toLowerCase())).slice(0,limit);
+
+  const grep=await git(dir,['grep','-n','-I','-F','-e',q,ref,'--'],{allowFailure:true});
+  const contentMatches=[];
+  if(grep.ok&&grep.stdout){
+    for(const line of grep.stdout.split('\n')){
+      if(contentMatches.length>=limit)break;
+      const first=line.indexOf(':');
+      const second=line.indexOf(':',first+1);
+      if(first<0||second<0)continue;
+      const refPath=line.slice(0,first);
+      const lineNumber=Number(line.slice(first+1,second))||null;
+      const text=line.slice(second+1);
+      const colon=refPath.indexOf(':');
+      const file=colon>=0?refPath.slice(colon+1):refPath;
+      contentMatches.push({file,line:lineNumber,text:text.slice(0,1000)});
+    }
+  }
+
+  const commits=await git(dir,['log','--all','--regexp-ignore-case','--grep='+q,'--pretty=format:%H%x1f%an%x1f%aI%x1f%s','-n',String(limit)],{allowFailure:true});
+  const commitMatches=commits.ok&&commits.stdout
+    ?commits.stdout.split('\n').filter(Boolean).map(line=>{
+      const [sha,author,date,subject]=line.split('\x1f');
+      return {sha,author,date,subject};
+    })
+    :[];
+
+  return {query:q,ref,file_matches:fileMatches,content_matches:contentMatches,commit_matches:commitMatches};
+}
+
+export async function getProjectActivity(id,{limit=100}={}){
+  limit=Math.max(1,Math.min(250,Number(limit)||100));
+  const [commits,issues,pullRequests,releases]=await Promise.all([
+    listCommits(id,{limit}),
+    listIssues(id),
+    listPullRequests(id),
+    listReleases(id)
+  ]);
+  const events=[
+    ...commits.map(x=>({type:'commit',id:x.sha,date:x.date,title:x.subject,author:x.author,sha:x.sha})),
+    ...issues.map(x=>({type:'issue',id:x.id,date:x.updated_at||x.created_at,title:x.title,state:x.state,number:x.number})),
+    ...pullRequests.map(x=>({type:'pull-request',id:x.id,date:x.updated_at||x.created_at,title:x.title,state:x.state,number:x.number,head:x.head,base:x.base})),
+    ...releases.map(x=>({type:'release',id:x.id,date:x.created_at,title:x.title,tag:x.tag}))
+  ].filter(x=>x.date).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit);
+  return events;
+}
+
+export async function createProjectBundle(id,{ref='--all'}={}){
+  const dir=projectDir(id);
+  if(!(await projectExists(id)))throw new Error('project_not_found');
+  const outRoot=path.resolve(process.env.TGG_PROJECTS_EXPORT_ROOT||'/data/tgg-project-exports');
+  await fs.mkdir(outRoot,{recursive:true});
+  const project=await getProject(id);
+  const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+  const file=path.join(outRoot,safeId(id)+'-'+stamp+'.bundle');
+  const args=['bundle','create',file];
+  if(ref==='--all')args.push('--all');
+  else args.push(safeRef(ref));
+  await git(dir,args);
+  const bytes=await fs.readFile(file);
+  return {
+    schema:'tgg.project.export/v1',
+    owner:'TGG',
+    project_id:project.id,
+    head:project.head,
+    branch:project.current_branch,
+    file,
+    bytes:bytes.length,
+    sha256:crypto.createHash('sha256').update(bytes).digest('hex'),
+    created_at:now()
+  };
 }
