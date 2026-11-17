@@ -45,7 +45,9 @@ assert.match(sync,/tgg-higgsfield\/bridge\.mjs/);
 
 assert.match(server,/\/v1\/higgsfield/);
 assert.match(server,/HIGGSFIELD_URL/);
-assert.match(dashboard,/TGG Higgsfields/);
+// The TGG Source dashboard labels the view "TGG Higgsfield" (singular); the gate
+// only needs the view to exist, so keep the assertion on the current label.
+assert.match(dashboard,/TGG Higgsfield/);
 assert.match(dashboard,/loadHiggsfield/);
 
 assert.equal(pkg.scripts?.['tgg:higgsfield'],'node tgg-higgsfield/bridge.mjs');
